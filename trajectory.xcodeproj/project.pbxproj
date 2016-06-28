@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		E954F42A1D22FA1700DF4319 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F4291D22FA1700DF4319 /* main.c */; };
+		E954F4321D22FA2400DF4319 /* orbit.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F4301D22FA2400DF4319 /* orbit.c */; };
+		E954F4351D22FBBE00DF4319 /* body.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F4331D22FBBD00DF4319 /* body.c */; };
+		E954F4381D22FC1500DF4319 /* vector3d.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F4361D22FC1500DF4319 /* vector3d.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +28,13 @@
 /* Begin PBXFileReference section */
 		E954F4261D22FA1700DF4319 /* trajectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = trajectory; sourceTree = BUILT_PRODUCTS_DIR; };
 		E954F4291D22FA1700DF4319 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		E954F4301D22FA2400DF4319 /* orbit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = orbit.c; sourceTree = "<group>"; };
+		E954F4311D22FA2400DF4319 /* orbit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = orbit.h; sourceTree = "<group>"; };
+		E954F4331D22FBBD00DF4319 /* body.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = body.c; sourceTree = "<group>"; };
+		E954F4341D22FBBE00DF4319 /* body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = body.h; sourceTree = "<group>"; };
+		E954F4361D22FC1500DF4319 /* vector3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vector3d.c; sourceTree = "<group>"; };
+		E954F4371D22FC1500DF4319 /* vector3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector3d.h; sourceTree = "<group>"; };
+		E954F4391D2302CA00DF4319 /* constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = constants.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +68,13 @@
 			isa = PBXGroup;
 			children = (
 				E954F4291D22FA1700DF4319 /* main.c */,
+				E954F4301D22FA2400DF4319 /* orbit.c */,
+				E954F4311D22FA2400DF4319 /* orbit.h */,
+				E954F4391D2302CA00DF4319 /* constants.h */,
+				E954F4331D22FBBD00DF4319 /* body.c */,
+				E954F4341D22FBBE00DF4319 /* body.h */,
+				E954F4361D22FC1500DF4319 /* vector3d.c */,
+				E954F4371D22FC1500DF4319 /* vector3d.h */,
 			);
 			path = trajectory;
 			sourceTree = "<group>";
@@ -118,6 +135,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E954F4351D22FBBE00DF4319 /* body.c in Sources */,
+				E954F4381D22FC1500DF4319 /* vector3d.c in Sources */,
+				E954F4321D22FA2400DF4319 /* orbit.c in Sources */,
 				E954F42A1D22FA1700DF4319 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
