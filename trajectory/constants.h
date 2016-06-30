@@ -11,5 +11,7 @@
 
 #define BIG_G (6.67e-11)
 
+typedef uint64_t Time;
+
 
 #endif /* constants_h */

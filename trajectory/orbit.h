@@ -10,18 +10,19 @@
 #define orbit_h
 
 #include <stdio.h>
+#include "types.h"
 
-struct Body;
+struct CBody;//Incomplete type to avoid circular deps
 
 typedef struct {
-    long double sma;
-    long double ecc;
-    long double inc;
-    long double lpe;
-    long double lan;
-    long double mna;
-    long double eph;
-    struct Body *parent;
+    float80_t sma;
+    float80_t ecc;
+    float80_t inc;
+    float80_t lpe;
+    float80_t lan;
+    float80_t mna;
+    float80_t eph;
+    struct CBody *parent;
 } Orbit;
 
 #endif /* orbit_h */

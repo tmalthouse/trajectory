@@ -11,6 +11,8 @@
 		E954F4321D22FA2400DF4319 /* orbit.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F4301D22FA2400DF4319 /* orbit.c */; };
 		E954F4351D22FBBE00DF4319 /* body.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F4331D22FBBD00DF4319 /* body.c */; };
 		E954F4381D22FC1500DF4319 /* vector3d.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F4361D22FC1500DF4319 /* vector3d.c */; };
+		E954F43C1D232B6700DF4319 /* spacecraft.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F43A1D232B6700DF4319 /* spacecraft.c */; };
+		E954F43F1D2446FA00DF4319 /* cbody.c in Sources */ = {isa = PBXBuildFile; fileRef = E954F43D1D2446FA00DF4319 /* cbody.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,12 +31,17 @@
 		E954F4261D22FA1700DF4319 /* trajectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = trajectory; sourceTree = BUILT_PRODUCTS_DIR; };
 		E954F4291D22FA1700DF4319 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		E954F4301D22FA2400DF4319 /* orbit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = orbit.c; sourceTree = "<group>"; };
-		E954F4311D22FA2400DF4319 /* orbit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = orbit.h; sourceTree = "<group>"; };
-		E954F4331D22FBBD00DF4319 /* body.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = body.c; sourceTree = "<group>"; };
-		E954F4341D22FBBE00DF4319 /* body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = body.h; sourceTree = "<group>"; };
-		E954F4361D22FC1500DF4319 /* vector3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vector3d.c; sourceTree = "<group>"; };
-		E954F4371D22FC1500DF4319 /* vector3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector3d.h; sourceTree = "<group>"; };
+		E954F4311D22FA2400DF4319 /* orbit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = orbit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		E954F4331D22FBBD00DF4319 /* body.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = body.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		E954F4341D22FBBE00DF4319 /* body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = body.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		E954F4361D22FC1500DF4319 /* vector3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = vector3d.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		E954F4371D22FC1500DF4319 /* vector3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = vector3d.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		E954F4391D2302CA00DF4319 /* constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = constants.h; sourceTree = "<group>"; };
+		E954F43A1D232B6700DF4319 /* spacecraft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spacecraft.c; sourceTree = "<group>"; };
+		E954F43B1D232B6700DF4319 /* spacecraft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spacecraft.h; sourceTree = "<group>"; };
+		E954F43D1D2446FA00DF4319 /* cbody.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbody.c; sourceTree = "<group>"; };
+		E954F43E1D2446FA00DF4319 /* cbody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbody.h; sourceTree = "<group>"; };
+		E954F4401D2448D300DF4319 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = types.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +79,12 @@
 				E954F4311D22FA2400DF4319 /* orbit.h */,
 				E954F4391D2302CA00DF4319 /* constants.h */,
 				E954F4331D22FBBD00DF4319 /* body.c */,
+				E954F4401D2448D300DF4319 /* types.h */,
 				E954F4341D22FBBE00DF4319 /* body.h */,
+				E954F43A1D232B6700DF4319 /* spacecraft.c */,
+				E954F43B1D232B6700DF4319 /* spacecraft.h */,
+				E954F43D1D2446FA00DF4319 /* cbody.c */,
+				E954F43E1D2446FA00DF4319 /* cbody.h */,
 				E954F4361D22FC1500DF4319 /* vector3d.c */,
 				E954F4371D22FC1500DF4319 /* vector3d.h */,
 			);
@@ -135,8 +147,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E954F43C1D232B6700DF4319 /* spacecraft.c in Sources */,
 				E954F4351D22FBBE00DF4319 /* body.c in Sources */,
 				E954F4381D22FC1500DF4319 /* vector3d.c in Sources */,
+				E954F43F1D2446FA00DF4319 /* cbody.c in Sources */,
 				E954F4321D22FA2400DF4319 /* orbit.c in Sources */,
 				E954F42A1D22FA1700DF4319 /* main.c in Sources */,
 			);

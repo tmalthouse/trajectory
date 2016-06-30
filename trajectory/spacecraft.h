@@ -1,24 +1,23 @@
 //
-//  body.h
+//  spacecraft.h
 //  trajectory
 //
 //  Created by Thomas Malthouse on 6/28/16.
 //  Copyright © 2016 Thomas Malthouse. All rights reserved.
 //
 
-#ifndef body_h
-#define body_h
+#ifndef spacecraft_h
+#define spacecraft_h
 
 #include <stdio.h>
-#include "vector3d.h"
 #include "orbit.h"
+#include "vector3d.h"
+#include "body.h"
 #include "types.h"
 
-typedef struct Body {
-    char name[64];
-    Orbit orbit;
-    float80_t mass;
-    Vector3d pos;
-} Body;
+typedef struct {
+    Body b;
+} Spacecraft;
 
-#endif /* body_h */
+
+#endif /* spacecraft_h */
