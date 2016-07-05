@@ -119,7 +119,7 @@ double mean_anomaly(double ecc_ano, double ecc)
 }
 
 
-double mean_ano_to_ecc_ano(double mean_ano, double ecc)
+double ecc_ano_from_mean_ano(double mean_ano, double ecc)
 {
     oneargfunc f = lambda (double, (double ecc_ano) {return (ecc_ano - ecc*sin(ecc_ano) - mean_ano);});
     oneargfunc f_deriv = lambda (double, (double ecc_ano) {return (1-ecc*cos(ecc_ano));});
@@ -179,4 +179,24 @@ Vector3d bodycentric_to_cartesian(Orbit o, Vector3d vect)
              vect.y * (cos(o.ape)*sin(o.inc));
 
     return prod;
+}
+
+void calculate_state_vectors(Body *b, Time t)
+{
+    double ecc_anomaly = ecc_ano_from_mean_ano(mean_ano_at_t(b->orbit, t), b->orbit.ecc);
+    double true_anomaly = true_ano_from_ecc_ano(ecc_anomaly, b->orbit.ecc);
+    double altitude = orbital_height_from_ecc_ano(b->orbit, ecc_anomaly);
+
+    Vector3d b_pos = bodycentric_position(altitude, true_anomaly);
+    Vector3d b_vel = bodycentric_velocity(b->orbit, altitude, ecc_anomaly);
+
+    b->pos = bodycentric_to_cartesian(b->orbit, b_pos);
+    b->vel = bodycentric_to_cartesian(b->orbit, b_vel);
+
+    return;
+}
+
+void calculate_elements(Body *b, Time t)
+{
+
 }

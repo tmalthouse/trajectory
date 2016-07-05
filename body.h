@@ -19,6 +19,7 @@ typedef struct Body {
     Orbit orbit;
     double mass;
     Vector3d pos;
+    Vector3d vel;
 } Body;
 
 #endif /* body_h */
