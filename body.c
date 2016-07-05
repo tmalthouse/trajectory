@@ -144,3 +144,39 @@ double orbital_height_from_ecc_ano(Orbit o, double ecc_ano)
 {
     return o.sma*(1-o.ecc*cos(ecc_ano));
 }
+
+Vector3d bodycentric_position(double orb_hgt, double true_ano)
+{
+    Vector3d pos;
+    pos.x = orb_hgt*cos(true_ano);
+    pos.y = orb_hgt*sin(true_ano);
+    pos.z = 0;
+    return pos;
+}
+
+Vector3d bodycentric_velocity(Orbit o, double orb_hgt, double ecc_ano)
+{
+    Vector3d vel;
+
+    double factor = sqrt(o.parent->mu * o.sma)/orb_hgt;
+    vel.x = factor * -1 * sin(ecc_ano);
+    vel.y = factor * sqrt(1-o.ecc*o.ecc) * cos(ecc_ano);
+    vel.z = 0;
+    return vel;
+}
+
+Vector3d bodycentric_to_cartesian(Orbit o, Vector3d vect)
+{
+    //This uses some kind of rotation matrix I found on the internet!
+    Vector3d prod;
+    prod.x = vect.x * (cos(o.ape)*cos(o.lan) - sin(o.ape)*cos(o.inc)*sin(o.lan)) -
+             vect.y * (sin(o.ape)*cos(o.lan) + cos(o.ape)*cos(o.inc)*cos(o.lan));
+
+    prod.y = vect.x * (cos(o.ape)*sin(o.lan) + sin(o.ape)*cos(o.inc)*sin(o.lan)) +
+             vect.y * (cos(o.ape)*cos(o.inc)*cos(o.lan) - sin(o.ape)*sin(o.lan));
+
+    prod.x = vect.x * (sin(o.ape)*sin(o.inc)) +
+             vect.y * (cos(o.ape)*sin(o.inc));
+
+    return prod;
+}

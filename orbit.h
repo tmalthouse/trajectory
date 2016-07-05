@@ -19,7 +19,7 @@ typedef struct {
     double sma;
     double ecc;
     double inc;
-    double lpe;
+    double ape;
     double lan;
     double mna;
     Time epoch;
