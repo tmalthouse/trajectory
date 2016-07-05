@@ -18,8 +18,7 @@ double newton_raphson_iterator(oneargfunc f, oneargfunc fderiv, double guess, ui
     if (iterations == 0) {
         return guess;
     }
-    
+
     double newguess = guess - (((*f)(guess))/((*fderiv)(guess)));
     return newton_raphson_iterator(f, fderiv, newguess, iterations-1);
 }
-

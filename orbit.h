@@ -22,10 +22,10 @@ typedef struct {
     double lpe;
     double lan;
     double mna;
-    double epoch;
+    Time epoch;
     struct CBody *parent;
 } Orbit;
 
-double newton_raphson_iterator(oneargfunc f, oneargfunc fderiv, double guess, uint8_t iterations);
+double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uint8_t iterations);
 
 #endif /* orbit_h */

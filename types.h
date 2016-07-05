@@ -15,10 +15,9 @@ typedef uint64_t Time;
 
 typedef double(*oneargfunc)(double a);
 
-#define lambda(return_type, function_body) \
-__extension__({ \
-return_type fn__lambda function_body \
-nested_fn; \
+#define lambda(return_type, function_body) ({ \
+      return_type lambda__fn__ function_body \
+          lambda__fn__; \
 })
 
 
