@@ -15,10 +15,5 @@ typedef uint64_t Time;
 
 typedef double(*oneargfunc)(double a);
 
-#define lambda(return_type, function_body) ({ \
-      return_type lambda__fn__ function_body \
-          lambda__fn__; \
-})
-
 
 #endif /* types_h */
