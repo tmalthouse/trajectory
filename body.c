@@ -118,14 +118,31 @@ double mean_anomaly(double ecc_ano, double ecc)
     return ecc_ano - ecc * sin(ecc_ano);
 }
 
+enum mode {
+    SET_ECC,
+    CALCULATE_ECC_ANO
+};
+
+/* Helper functions for ecc_ano_from_mean_ano*/
+//I'm goin to global variable hell...but it's the best way to do this without closures.
+    double ecc = 0;
+    double mean_ano = 0;
+
+    double ecc_ano_func(double ecc_ano)
+    {
+        return (ecc_ano - ecc*sin(ecc_ano) - mean_ano);
+    }
+
+    double ecc_ano_deriv_func(double ecc_ano)
+    {
+        return (1-ecc*cos(ecc_ano));
+    }
 
 double ecc_ano_from_mean_ano(double mean_ano, double ecc)
 {
-    oneargfunc f = lambda (double, (double ecc_ano) {return (ecc_ano - ecc*sin(ecc_ano) - mean_ano);});
-    oneargfunc f_deriv = lambda (double, (double ecc_ano) {return (1-ecc*cos(ecc_ano));});
-
-    return newton_raphson_iterate(f, f_deriv, mean_ano, 16);
+    return newton_raphson_iterate(ecc_ano_func, ecc_ano_deriv_func, mean_ano, 16);
 }
+/*Now back to your regularly scheduled programming...*/
 
 double mean_ano_at_t(Orbit o, Time t)
 {

@@ -14,7 +14,6 @@
 #define BIG_G (6.67e-11)
 #define PI (3.14159265)
 
-typedef uint64_t Time;
 
 
 #endif /* constants_h */
