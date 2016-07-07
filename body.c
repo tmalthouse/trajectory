@@ -124,7 +124,7 @@ enum mode {
 };
 
 /* Helper functions for ecc_ano_from_mean_ano*/
-//I'm goin to global variable hell...but it's the best way to do this without closures.
+//I'm going to global variable hell...but it's the best way to do this without closures.
     double ecc = 0;
     double mean_ano = 0;
 
@@ -212,6 +212,20 @@ void calculate_state_vectors(Body *b, Time t)
 
     return;
 }
+
+/// The newton_raphson_iterator function (unsuprisingly) implements the Newton-Raphson iteration.
+/// Given a pointer to a function (The GCC inline functions are really helpful here), a pointer to its derivative function, an initial guess, and a
+/// number of iterations to do, it returns an approximation of the zero of f. Iterations is capped at 255 because there's no need for more.
+double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uint8_t iterations)
+{
+    if (iterations == 0) {
+        return guess;
+    }
+    
+    double newguess = guess - (((*f)(guess))/((*fderiv)(guess)));
+    return newton_raphson_iterate(f, fderiv, newguess, iterations-1);
+}
+
 
 void calculate_elements(Body *b, Time t)
 {
