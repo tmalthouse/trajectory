@@ -51,3 +51,11 @@ inline double v3d_vector_angle(Vector3d a, Vector3d b)
 {
     return acos(v3d_dotprod(a, b)/(v3d_abs(a)*v3d_abs(b)));
 }
+
+inline Vector3d v3d_unit_vector(Vector3d a)
+{
+    double abs = v3d_abs(a);
+    
+    //Divide each quantity by the magnitude
+    return v3d_fmult(a, 1/abs);
+}

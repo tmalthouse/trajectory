@@ -30,5 +30,6 @@ Vector3d v3d_fmult(Vector3d a, double f);
 double v3d_dotprod(Vector3d a, Vector3d b);
 Vector3d v3d_xprod(Vector3d a, Vector3d b);
 double v3d_vector_angle(Vector3d a, Vector3d b);
+Vector3d v3d_unit_vector(Vector3d a);
 
 #endif /* vector3d_h */

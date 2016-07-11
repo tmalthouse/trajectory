@@ -8,19 +8,19 @@
 
 #include "body.h"
 #include <tgmath.h>
+#include <string.h>
+#include <stdlib.h>
 #include "constants.h"
 #include "vector3d.h"
-#include "spacecraft.h"
 #include "types.h"
-#include "orbit.h"
-#include "cbody.h"
 
-
-
-double body_g_acc(Body a, Body s)
+//Returns the g-force between the 2 given bodies.
+Vector3d body_gforce(Body a, Body b)
 {
-    double dist = v3d_absdist(a.pos, s.pos);
-    return (BIG_G * a.mass)/(dist*dist);
+    double abs_dist = v3d_absdist(a.pos, b.pos);
+    Vector3d unit_vect = v3d_unit_vector(v3d_vdiff(a.pos, b.pos));
+    
+    return v3d_fmult(unit_vect, (BIG_G * a.mass * b.mass)/(abs_dist*abs_dist));
 }
 
 double parent_mu(Orbit o)
@@ -28,8 +28,7 @@ double parent_mu(Orbit o)
     if (o.parent == NULL) {
         return 0.0;
     }
-    //The cast is a way to get rudimentary inheritance in C--mass is a property of Body, and CBody is a "superclass" of body that can be casted to Body (or the basic body can be accessed via CBody.body.
-    return BIG_G * ((Body*)(o.parent))->mass;
+    return BIG_G * o.parent->mass;
 }
 
 
@@ -227,7 +226,30 @@ double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uin
 }
 
 
-void calculate_elements(Body *b, Time t)
+Vector3d calculate_fnet(Body *b, uint64_t body_count, uint64_t focus_body)
 {
+    Vector3d force = {0};
+    
+    for (uint64_t i=0; i<body_count; i++) {
+        if (i!=focus_body) {
+            force = v3d_vsum(force, body_gforce(b[i], b[focus_body]));
+        }
+    }
+    return force;
+}
 
+
+static void update_state_vectors_helper(Body *b, uint64_t count, Time dt, Vector3d acc)
+{
+    
+}
+
+
+void update_state_vectors(Body *sys, uint64_t count, Time t, Time dt)
+{
+    //We create a local copy of the bodies, since we need to change their positions temporarily and don't want to affect other threads/cores/whatever.
+    Body *lcl_bodies = calloc(count, sizeof(Body));
+    memcpy(lcl_bodies, sys, count*sizeof(Body));
+    
+    
 }
