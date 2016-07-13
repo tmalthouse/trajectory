@@ -23,6 +23,17 @@ Vector3d body_gforce(Body a, Body b)
     return v3d_fmult(unit_vect, (BIG_G * a.mass * b.mass)/(abs_dist*abs_dist));
 }
 
+Vector3d net_gforce(Body *sys, uint64_t count, uint64_t focusbody)
+{
+    Vector3d result = V3D_0_VECTOR;
+    for (uint32_t i=0; i<count; i++) {
+        if (i!=focusbody) {
+            result = v3d_vsum(result, body_gforce(sys[i], sys[focusbody]));
+        }
+    }
+    return result;
+}
+
 double parent_mu(Orbit o)
 {
     if (o.parent == NULL) {
@@ -214,7 +225,7 @@ void calculate_state_vectors(Body *b, Time t)
 
 /// The newton_raphson_iterator function (unsuprisingly) implements the Newton-Raphson iteration.
 /// Given a pointer to a function (The GCC inline functions are really helpful here), a pointer to its derivative function, an initial guess, and a
-/// number of iterations to do, it returns an approximation of the zero of f. Iterations is capped at 255 because there's no need for more.
+/// number of iterations to do, it returns an approximation of the zero of f. Iterations are capped at 255 because there's no need for more.
 double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uint8_t iterations)
 {
     if (iterations == 0) {
@@ -225,31 +236,67 @@ double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uin
     return newton_raphson_iterate(f, fderiv, newguess, iterations-1);
 }
 
-
-Vector3d calculate_fnet(Body *b, uint64_t body_count, uint64_t focus_body)
+void euler_step(Body *b, Vector3d acc, Vector3d vel, Time dt)
 {
-    Vector3d force = {0};
-    
-    for (uint64_t i=0; i<body_count; i++) {
-        if (i!=focus_body) {
-            force = v3d_vsum(force, body_gforce(b[i], b[focus_body]));
-        }
-    }
-    return force;
+    b->pos = v3d_vsum(b->pos, v3d_fmult(vel, dt));
+    b->vel = v3d_vsum(b->vel, v3d_fmult(acc, dt));
 }
 
-
-static void update_state_vectors_helper(Body *b, uint64_t count, Time dt, Vector3d acc)
+void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt)
 {
+    Body *lsys = calloc (1, count*sizeof(Body));
+    memcpy(lsys, sys, count*sizeof(Body)); //We want to use a copy so we aren't disturbing any other thread/core with our orbital shiftiness
+    Body *focus = &lsys[bodyid];
     
-}
-
-
-void update_state_vectors(Body *sys, uint64_t count, Time t, Time dt)
-{
-    //We create a local copy of the bodies, since we need to change their positions temporarily and don't want to affect other threads/cores/whatever.
-    Body *lcl_bodies = calloc(count, sizeof(Body));
-    memcpy(lcl_bodies, sys, count*sizeof(Body));
+    Vector3d init_pos = focus->pos;
+    Vector3d init_vel = focus->vel;
     
+    // Step one of our two simultaneous runge-kuttas.
+    Vector3d acc_1 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass)); // Aka dv/dt
+    Vector3d vel_1 = init_vel; // Aka dr/dt
     
+    euler_step(focus, acc_1, vel_1, dt/2);
+    
+    // Now step two: the second slopes
+    Vector3d acc_2 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
+    Vector3d vel_2 = focus->vel;
+    
+    //Reset it for the mini-euler
+    focus->pos = init_pos;
+    focus->vel = init_vel;
+    
+    euler_step(focus, acc_2, vel_2, dt/2);
+    
+    // You guessed it...Step 3!
+    Vector3d acc_3 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
+    Vector3d vel_3 = focus->vel;
+    
+    //Reset again!
+    focus->pos = init_pos;
+    focus->vel = init_vel;
+    
+    euler_step(focus, acc_3, vel_3, dt);
+    
+    //One last step...
+    Vector3d acc_4 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
+    Vector3d vel_4 = focus->vel;
+    
+    Vector3d v_combined = v3d_vsum(init_vel,
+                                   v3d_fmult(v3d_nsum(4, acc_1,
+                                                        v3d_fmult(acc_2, 2),
+                                                        v3d_fmult(acc_3, 2),
+                                                        acc_4),
+                                             dt/6));
+    Vector3d p_combined = v3d_vsum(init_pos,
+                                   v3d_fmult(v3d_nsum(4, vel_1,
+                                                      v3d_fmult(vel_2, 2),
+                                                      v3d_fmult(vel_3, 2),
+                                                      vel_4),
+                                             dt/6));
+    Body *original = &sys[bodyid];
+    
+    original->vel = v_combined;
+    original->pos = p_combined;
+    free(lsys);
+    return;
 }

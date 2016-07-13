@@ -11,6 +11,14 @@
 
 #define SQ(x) (x*x)
 
+inline bool v3d_equals(Vector3d a, Vector3d b)
+{
+    if (a.x==b.x && a.y==b.y && a.z==b.z) {
+        return true;
+    }
+    return false;
+}
+
 inline double v3d_abs(Vector3d v)
 {
     return v3d_absdist(v, (Vector3d){0,0,0});
@@ -58,4 +66,28 @@ inline Vector3d v3d_unit_vector(Vector3d a)
     
     //Divide each quantity by the magnitude
     return v3d_fmult(a, 1/abs);
+}
+
+Vector3d v3d_asum(Vector3d *vectors, uint64_t count)
+{
+    if (count == 0) {
+        return V3D_0_VECTOR;
+    }
+    return v3d_vsum(vectors[0], v3d_asum(vectors+1, count-1));
+}
+
+Vector3d v3d_nsum(int count, ...)
+{
+    if (count == 0) {
+        return V3D_0_VECTOR;
+    }
+    
+    va_list args;
+    va_start(args, count);
+    Vector3d sum = V3D_0_VECTOR;
+    
+    for (int i=0; i<count; i++) {
+        sum = v3d_vsum(sum, va_arg(args, Vector3d));
+    }
+    return sum;
 }
