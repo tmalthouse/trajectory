@@ -89,5 +89,6 @@ Vector3d v3d_nsum(int count, ...)
     for (int i=0; i<count; i++) {
         sum = v3d_vsum(sum, va_arg(args, Vector3d));
     }
+    va_end(args);
     return sum;
 }

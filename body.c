@@ -128,22 +128,17 @@ double mean_anomaly(double ecc_ano, double ecc)
     return ecc_ano - ecc * sin(ecc_ano);
 }
 
-enum mode {
-    SET_ECC,
-    CALCULATE_ECC_ANO
-};
 
 /* Helper functions for ecc_ano_from_mean_ano*/
-//I'm going to global variable hell...but it's the best way to do this without closures.
     double ecc = 0;
     double mean_ano = 0;
 
-    double ecc_ano_func(double ecc_ano)
+    static double ecc_ano_func(double ecc_ano)
     {
         return (ecc_ano - ecc*sin(ecc_ano) - mean_ano);
     }
 
-    double ecc_ano_deriv_func(double ecc_ano)
+    static double ecc_ano_deriv_func(double ecc_ano)
     {
         return (1-ecc*cos(ecc_ano));
     }
@@ -223,9 +218,7 @@ void calculate_state_vectors(Body *b, Time t)
     return;
 }
 
-/// The newton_raphson_iterator function (unsuprisingly) implements the Newton-Raphson iteration.
-/// Given a pointer to a function (The GCC inline functions are really helpful here), a pointer to its derivative function, an initial guess, and a
-/// number of iterations to do, it returns an approximation of the zero of f. Iterations are capped at 255 because there's no need for more.
+
 double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uint8_t iterations)
 {
     if (iterations == 0) {
@@ -299,4 +292,13 @@ void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt)
     original->pos = p_combined;
     free(lsys);
     return;
+}
+
+
+void system_update(Body *sys, uint64_t count, Time dt, Time *t)
+{
+    for (uint64_t i=0; i<count; i++) {
+        update_state_vectors(sys, count, i, dt);
+    }
+    *t += dt;
 }
