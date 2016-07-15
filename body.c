@@ -130,8 +130,8 @@ double mean_anomaly(double ecc_ano, double ecc)
 
 
 /* Helper functions for ecc_ano_from_mean_ano*/
-    double ecc = 0;
-    double mean_ano = 0;
+    static double ecc = 0;
+    static double mean_ano = 0;
 
     static double ecc_ano_func(double ecc_ano)
     {
@@ -143,8 +143,10 @@ double mean_anomaly(double ecc_ano, double ecc)
         return (1-ecc*cos(ecc_ano));
     }
 
-double ecc_ano_from_mean_ano(double mean_ano, double ecc)
+double ecc_ano_from_mean_ano(double mean_ano_param, double ecc_param)
 {
+    ecc = ecc_param;
+    mean_ano = mean_ano_param;
     return newton_raphson_iterate(ecc_ano_func, ecc_ano_deriv_func, mean_ano, 16);
 }
 /*Now back to your regularly scheduled programming...*/
