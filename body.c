@@ -301,6 +301,7 @@ void system_update(Body *sys, uint64_t count, Time dt, Time *t)
 {
     for (uint64_t i=0; i<count; i++) {
         update_state_vectors(sys, count, i, dt);
+        printf("Absolute velocity of body %llu is %f\n", i, v3d_abs(sys[i].vel));
     }
     *t += dt;
 }

@@ -39,10 +39,10 @@ Vector2dPair min_max_xy_coords(Body *sys, uint64_t count)
 
 Vector2d screenpos(Vector3d body_pos, Vector2dPair orb_min_max, Vector2d screensize)
 {
-    double x_dist = (body_pos.x-orb_min_max.a.x)/(orb_min_max.b.x-orb_min_max.a.x);
-    double y_dist = (orb_min_max.a.y-body_pos.y)/(orb_min_max.a.y-orb_min_max.b.y);
+    double x_prop = (body_pos.x-orb_min_max.a.x+10)/(orb_min_max.b.x-orb_min_max.a.x);
+    double y_prop = (orb_min_max.b.y-body_pos.y)/(orb_min_max.b.y-orb_min_max.a.y);
     
-    return (Vector2d){x_dist*screensize.x, y_dist*screensize.y};
+    return (Vector2d){x_prop*screensize.x, y_prop*screensize.y};
 }
 
 void render_system(Body *sys, uint64_t body_count, SDL_Renderer *renderer, Vector2d screen_size)
@@ -99,15 +99,16 @@ void rungame()
     Time t=0;
     SDL_Event e;
     
-    Body sys[3];
+    Body sys[4];
     
-    sys[0] = (Body){.mass =  1e10, .pos =  (Vector3d){0, 0, 0}, .vel =  (Vector3d){0,0,0}};
-    sys[1] = (Body){.mass =  1e10, .pos =  (Vector3d){1e5, 1e5, 0}, .vel =  (Vector3d){0,1e3,0}};
-    sys[2] = (Body){.mass =  1e10, .pos =  (Vector3d){5000, 5000, 0}, .vel =  (Vector3d){0,1e3,0}};
+    sys[0] = (Body){.mass =  1e15, .pos =  (Vector3d){0, 0, 0}, .vel =  (Vector3d){0,0,0}};
+    sys[1] = (Body){.mass =  1e15, .pos =  (Vector3d){1e5, 1e5, 0}, .vel =  (Vector3d){0,0,0}};
+    sys[2] = (Body){.mass =  1e15, .pos =  (Vector3d){-1e5, -1e5, 0}, .vel =  (Vector3d){0,0,0}};
+    sys[3] = (Body){.mass =  1e5,  .pos =  (Vector3d){0, 1e3, 0}, .vel = (Vector3d){0, -.1, 0}};
     
     while (!quit) {
-                SDL_Delay(10);
-        if (update(sys, 3, render, screensize, &t, &e)) {
+        SDL_Delay(10);
+        if (update(sys, 4, render, screensize, &t, &e)) {
             quit = true;
         }
     }

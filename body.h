@@ -38,6 +38,11 @@ typedef struct Body {
     double mu;
 } Body;
 
+typedef struct {
+    Body *planets;
+    uint64_t count;
+} SolarSystem;
+
 /** The newton_raphson_iterator function (unsuprisingly) implements the Newton-Raphson iteration.
     Given a pointer to a function (The GCC inline functions are really helpful here), a pointer to its derivative function, an initial guess, and a
     number of iterations to do, it returns an approximation of the zero of f. Iterations are capped at 255 because there's really no possible
@@ -95,7 +100,6 @@ double mean_ano_at_t(Orbit o, Time t);
 
 /// true_ano_from_ecc_ano does what it says on the box. It's very useful for updating the orbital elements.
 double true_ano_from_ecc_ano(double ecc_ano, double ecc);
-
 
 /// Calculates the current orbital altitude  given an orbit and its eccentric anomaly. Useful for calculating the state vectors.
 double orbital_height_from_ecc_ano(Orbit o, double ecc_ano);
