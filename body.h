@@ -14,8 +14,6 @@
 #include "types.h"
 
 typedef struct {
-    uint64_t id;
-    
     double sma;
     double ecc;
     double inc;
@@ -49,6 +47,9 @@ typedef struct {
     reason for more.
  */
 double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uint8_t iterations);
+
+/// Returns the grav. parameter (mu) of the given body.
+double calculate_mu(Body b);
 
 /// body_gforce returns a vector of the force exerted on body a by body b
 Vector3d body_gforce(Body a, Body b);

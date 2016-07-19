@@ -34,12 +34,17 @@ Vector3d net_gforce(Body *sys, uint64_t count, uint64_t focusbody)
     return result;
 }
 
+double calculate_mu(Body b)
+{
+    return BIG_G*b.mass;
+}
+
 double parent_mu(Orbit o)
 {
     if (o.parent == NULL) {
         return 0.0;
     }
-    return BIG_G * o.parent->mass;
+    return calculate_mu(*o.parent);
 }
 
 

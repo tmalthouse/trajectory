@@ -11,9 +11,22 @@
 
 #define SQ(x) (x*x)
 
-inline bool v3d_equals(Vector3d a, Vector3d b)
+static bool fp_eq(double a, double b)
+{
+    return fabs(a-b)<0.1?true:false;
+}
+
+inline bool v3d_equal(Vector3d a, Vector3d b)
 {
     if (a.x==b.x && a.y==b.y && a.z==b.z) {
+        return true;
+    }
+    return false;
+}
+
+inline bool v3d_fp_eq(Vector3d a, Vector3d b)
+{
+    if (fp_eq(a.x, b.x) && fp_eq(a.y, b.y) && fp_eq(a.z, b.z)) {
         return true;
     }
     return false;
@@ -52,7 +65,7 @@ inline double v3d_dotprod(Vector3d a, Vector3d b)
 
 inline Vector3d v3d_xprod(Vector3d a, Vector3d b)
 {
-    return (Vector3d){a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.y, a.x*b.y - a.y*b.x};
+    return (Vector3d){a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x};
 }
 
 inline double v3d_vector_angle(Vector3d a, Vector3d b)

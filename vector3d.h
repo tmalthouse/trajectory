@@ -35,6 +35,9 @@ typedef struct {
 /// Checks two vectors for equality. Returns true if all elements match, false if there is any nonmatch.
 bool v3d_equal(Vector3d a, Vector3d b);
 
+/// Checks two vectors for equality, accountin for fp stuff. Not accurate for small vectors.
+bool v3d_fp_eq(Vector3d a, Vector3d b);
+
 /// Returns the magnitude (absolute value) of a vector.
 double v3d_abs(Vector3d v);
 
