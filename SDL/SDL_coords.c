@@ -11,7 +11,7 @@
 #include "../vector3d.h"
 #include "../debug.h"
 
-static Vector2d top_right, bottom_left;
+static Vector2d top_right, bottom_left, midpoint;
 static Vector2d screensize;
 static double ratio;
 
@@ -35,11 +35,13 @@ void set_minmax_coords(Vector2d tr, Vector2d bl)
     top_right = tr;
     bottom_left = bl;
     ratio = calculate_ratio(tr, bl);
+    midpoint = (Vector2d){(tr.x+bl.x)/2, (tr.y+bl.y)/2};
 }
 
 Vector2d calculate_screencoord(Vector3d spacecoord)
 {
-    Vector2d screencoord = {(spacecoord.x-bottom_left.x)*ratio + screensize.x/2, (top_right.y-spacecoord.y)*ratio + screensize.y/2};
+    double xcoord = (spacecoord.x-midpoint.x)*ratio + (screensize.x/2);
+    double ycoord = (midpoint.y-spacecoord.y)*ratio + (screensize.y/2);
     
-    return screencoord;
+    return (Vector2d){xcoord, ycoord};
 }

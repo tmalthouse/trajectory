@@ -103,9 +103,9 @@ void rungame()
     Body sys[4];
     
     sys[0] = (Body){.mass =  1, .pos =  (Vector3d){0, 0, 0}, .vel =  (Vector3d){0,0,0}};
-    sys[1] = (Body){.mass =  1, .pos =  (Vector3d){1e5, 1e5, 0}, .vel =  (Vector3d){0,0,0}};
-    sys[2] = (Body){.mass =  1, .pos =  (Vector3d){-1e5, -1e5, 0}, .vel =  (Vector3d){0,0,0}};
-    sys[3] = (Body){.mass =  1,  .pos =  (Vector3d){0, 1e3, 0}, .vel = (Vector3d){0, 0, 0}};
+    sys[1] = (Body){.mass =  1, .pos =  (Vector3d){1e3, 1e3, 0}, .vel =  (Vector3d){0,0,0}};
+    sys[2] = (Body){.mass =  1, .pos =  (Vector3d){-1e3, -1e3, 0}, .vel =  (Vector3d){0,0,0}};
+    sys[3] = (Body){.mass =  1,  .pos =  (Vector3d){5e2, 5e2, 0}, .vel = (Vector3d){-.01, 0, 0}};
     
     set_screensize(screensize);
     Vector2dPair minmax = min_max_xy_coords(sys, 4);
