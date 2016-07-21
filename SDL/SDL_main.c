@@ -64,7 +64,7 @@ int event_handler(SDL_Event *e)
             case SDL_QUIT:
                 return 1;
             default:
-                printf("There's an event!\n");
+                dblogger("Event detected");
         }
     }
     return 0;
@@ -89,7 +89,7 @@ void rungame()
     SDL_Init(SDL_INIT_VIDEO);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
     
-    Vector2d screensize = {600,600};
+    Vector2d screensize = {800,800};
     
     SDL_Window *win = SDL_CreateWindow("Trajectory!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screensize.x, screensize.y, SDL_WINDOW_SHOWN);
     
@@ -102,17 +102,17 @@ void rungame()
     
     Body sys[4];
     
-    sys[0] = (Body){.mass =  1, .pos =  (Vector3d){0, 0, 0}, .vel =  (Vector3d){0,0,0}};
-    sys[1] = (Body){.mass =  1, .pos =  (Vector3d){1e3, 1e3, 0}, .vel =  (Vector3d){0,0,0}};
-    sys[2] = (Body){.mass =  1, .pos =  (Vector3d){-1e3, -1e3, 0}, .vel =  (Vector3d){0,0,0}};
-    sys[3] = (Body){.mass =  1,  .pos =  (Vector3d){5e2, 5e2, 0}, .vel = (Vector3d){-.01, 0, 0}};
+    sys[0] = (Body){.mass =  1e8, .pos =  (Vector3d){0, 0, 0}, .vel =  (Vector3d){0,0,0}};
+    sys[1] = (Body){.mass =  1, .pos =  (Vector3d){1e3, 1e3, 0}, .vel =  (Vector3d){0,.01,0}};
+    sys[2] = (Body){.mass =  1, .pos =  (Vector3d){-1e3, -1e3, 0}, .vel =  (Vector3d){.002,0,0}};
+    sys[3] = (Body){.mass =  1,  .pos =  (Vector3d){5e2, 5e2, 0}, .vel = (Vector3d){-.001, 0, 0}};
     
     set_screensize(screensize);
     Vector2dPair minmax = min_max_xy_coords(sys, 4);
     set_minmax_coords(minmax.a, minmax.b);
     
     while (!quit) {
-        SDL_Delay(10);
+        SDL_Delay(5);
         if (update(sys, 4, render, screensize, &t, &e)) {
             quit = true;
         }

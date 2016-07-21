@@ -44,25 +44,6 @@ void logger(char *fmt, ...)
     va_end(args);
 }
 
-void log_system_info()
-{
-    FILE *sysinfo;
-#ifdef __APPLE__
-    printf("popen party!! On an apple!!\n");
-    sysinfo = popen("system_profiler SPHardwareDataType", "r");
-#elif __LINUX__
-    printf("Penguin popen!\n");
-    sysinfo = popen("lscpu", "r");
-#endif
-    char c;
-    while ((c=fgetc(sysinfo)!=EOF)) {
-        putc(c, stdout);
-        fputc(c, logfile);
-    }
-    
-    pclose(sysinfo);
-}
-
 void dblogger(char *fmt, ...)
 {
 #ifdef DEBUG

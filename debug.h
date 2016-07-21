@@ -13,7 +13,6 @@
 static FILE *logfile;
 
 void start_logger();
-void log_system_info();
 void logger(char *fmt, ...);
 void dblogger(char *fmt, ...);
 void end_logger();

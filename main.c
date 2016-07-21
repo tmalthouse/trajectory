@@ -17,9 +17,7 @@ void test();
 int main(int argc, const char * argv[]) {
     // insert code here...
     start_logger();
-    log_system_info();
     rungame();
-    test();
     printf("Hello, World!\n");
     return 0;
 }
