@@ -10,17 +10,10 @@
 #define SDL_main_h
 
 #include <stdio.h>
+#include "../vector2d.h"
 #define PLANET_SIZE (2)
 
-typedef struct {
-    double x;
-    double y;
-} Vector2d;
 
-typedef struct {
-    Vector2d a;
-    Vector2d b;
-} Vector2dPair;
 
 void rungame();
 

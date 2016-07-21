@@ -37,6 +37,7 @@ SolarSystem *load_system(FILE *sys)
     
     //Allocate space for the bodies
     Body *planets = calloc(count, sizeof(Body));
+    planets = NULL;
     
 err:
     config_destroy(&config);

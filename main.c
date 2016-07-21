@@ -8,12 +8,16 @@
 
 #include <stdio.h>
 #include "body.h"
+#include "debug.h"
 #include "SDL/SDL_main.h"
+
 
 void test();
 
 int main(int argc, const char * argv[]) {
     // insert code here...
+    start_logger();
+    log_system_info();
     rungame();
     test();
     printf("Hello, World!\n");
