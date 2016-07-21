@@ -123,5 +123,7 @@ void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt);
 /// Updates every body in a system at time dt. Uses a constant timestep for all bodies, which is not optimal.
 void system_update(Body *sys, uint64_t count, Time dt, Time *t);
 
+uint64_t system_total_energy(Body *sys, uint64_t count);
+
 
 #endif /* body_h */

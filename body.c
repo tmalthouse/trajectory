@@ -311,3 +311,14 @@ void system_update(Body *sys, uint64_t count, Time dt, Time *t)
     }
     *t += dt;
 }
+
+uint64_t system_total_energy(Body *sys, uint64_t count)
+{
+    uint64_t total_e = 0;
+    
+    for (int i=0; i<count; i++) {
+        total_e += 0.5 * sys[i].mass + pow(v3d_abs(sys[i].vel), 2);
+    }
+    
+    return total_e;
+}

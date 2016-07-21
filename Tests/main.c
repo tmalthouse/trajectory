@@ -25,7 +25,7 @@ testfunc v3d_tests[] = {test_v3d_equals,
 
 int main(int argc, const char * argv[]) {
     int test_count = (sizeof(v3d_tests)/sizeof(testfunc));
-    int success_count;
+    int success_count = 0;
 
     for (int i=0; i<test_count; i++) {
         success_count += v3d_tests[i]();

@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 
-typedef uint64_t Time;
+typedef double Time;
 
 typedef double(*oneargfunc)(double a);
 

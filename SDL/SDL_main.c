@@ -13,6 +13,10 @@
 #include "../types.h"
 #include "../debug.h"
 
+const uint32_t max_fps = 30;
+
+const uint32_t ms_per_frame = 1000/(max_fps);
+
 Vector2dPair min_max_xy_coords(Body *sys, uint64_t count)
 {
     Vector2d min = {0,0};
@@ -63,8 +67,8 @@ int event_handler(SDL_Event *e)
         switch (e->type) {
             case SDL_QUIT:
                 return 1;
-            default:
-                dblogger("Event detected");
+            default:;
+                //dblogger("Event detected");
         }
     }
     return 0;
@@ -76,7 +80,7 @@ int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d scr
         return 1;
     }
     
-    double dt = 100;
+    Time dt = 20;
     system_update(sys, body_count, dt, t);
     render_system(sys, body_count, renderer, screen_size);
     *t+=dt;
@@ -98,6 +102,7 @@ void rungame()
     
     bool quit = false;
     Time t=0;
+    uint32_t last_update_time = SDL_GetTicks();
     SDL_Event e;
     
     Body sys[4];
@@ -112,10 +117,18 @@ void rungame()
     set_minmax_coords(minmax.a, minmax.b);
     
     while (!quit) {
-        SDL_Delay(5);
-        if (update(sys, 4, render, screensize, &t, &e)) {
-            quit = true;
+        for (int i=0; i<500; i++) {
+            if (update(sys, 4, render, screensize, &t, &e)) {
+                quit = true;
+            }
         }
+        
+        //If we haven't elapsed the minimum per frame yet
+        while (last_update_time + ms_per_frame > SDL_GetTicks()) {
+            //Sleep 1 ms before checking again
+            SDL_Delay(5);
+        }
+        last_update_time = SDL_GetTicks();
     }
     
     SDL_DestroyRenderer(render);
