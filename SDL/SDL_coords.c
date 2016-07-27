@@ -7,6 +7,7 @@
 //
 
 #include "SDL_coords.h"
+#include <tgmath.h>
 #include "SDL_main.h"
 #include "../vector3d.h"
 #include "../debug.h"
@@ -20,7 +21,7 @@ static double calculate_ratio(Vector2d top_right, Vector2d bottom_left)
     double xratio = screensize.x/(bottom_left.x-top_right.x);
     double yratio = screensize.y/(top_right.y-bottom_left.y);
     
-    double ratio = (xratio < yratio)? yratio : xratio;//Set the ratio to the smaller of the two.
+    double ratio = (fabs(xratio) < fabs(yratio))? xratio : yratio;//Set the ratio to the smaller of the two.
     dblogger("Ratio is %f\n", ratio);
     return ratio;
 }
@@ -34,7 +35,7 @@ void set_minmax_coords(Vector2d tr, Vector2d bl)
 {
     top_right = tr;
     bottom_left = bl;
-    ratio = calculate_ratio(tr, bl);
+    ratio = calculate_ratio(bl, tr);
     midpoint = (Vector2d){(tr.x+bl.x)/2, (tr.y+bl.y)/2};
 }
 

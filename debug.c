@@ -10,8 +10,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-
-
+#include <unistd.h>
 
 static const char log_path[] = "/Users/Thomas/Desktop/trajectory.log";
 static FILE *logfile;
@@ -20,19 +19,7 @@ static FILE *logfile;
 void start_logger()
 {
     logfile = fopen(log_path, "w");
-    char command[256];
-    
-#ifdef __APPLE__
-    strcpy(command, "system_profiler SPHardwareDataType >");
-#elif __LINUX__
-    strcpy(command, "lscpu >");
-#else
-    logger("Unsupported OS! Things may not work right!");
-    exit(EXIT_FAILURE);
-#endif
-    
-    system(strcat(command, log_path));
-    
+
     if (!logfile) {
         perror("File error");
         exit(EXIT_FAILURE);

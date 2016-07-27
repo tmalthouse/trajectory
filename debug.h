@@ -10,7 +10,6 @@
 #define debug_h
 #include <stdio.h>
 
-static FILE *logfile;
 
 void start_logger();
 void logger(char *fmt, ...);
