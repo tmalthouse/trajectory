@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "vector3d.h"
 #include "types.h"
+#include "color.h"
 
 typedef struct {
     double sma;
@@ -34,6 +35,7 @@ typedef struct Body {
     Vector3d pos;
     Vector3d vel;
     double mu;
+    Color color;
 } Body;
 
 typedef struct {

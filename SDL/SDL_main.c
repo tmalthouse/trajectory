@@ -8,10 +8,12 @@
 
 #include "SDL_main.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 #include "SDL_coords.h"
 #include "../body.h"
 #include "../types.h"
 #include "../debug.h"
+#include "../color.h"
 
 const uint32_t max_fps = 30;
 
@@ -49,12 +51,14 @@ void render_system(Body *sys, uint64_t body_count, SDL_Renderer *renderer, Vecto
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
     
-    // Then, we set the color to planet color (in this case, white)
+    // Then, we set the color to planet color (in this case, white for now)
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     for (uint64_t i=0; i<body_count; i++) {
         Vector2d spos = calculate_screencoord(sys[i].pos);
         logger("Screenpos of body %llu is %f, %f\n", i, spos.x, spos.y);
-        SDL_RenderDrawPoint(renderer, spos.x, spos.y);
+        //SDL_RenderDrawPoint(renderer, spos.x, spos.y);
+        Color c = sys[i].color;
+        filledCircleRGBA(renderer, spos.x, spos.y, 4, c.r, c.g, c.b, c.a);
     }
     
     //Finally, we push our changes to the screen
@@ -67,6 +71,16 @@ int event_handler(SDL_Event *e)
         switch (e->type) {
             case SDL_QUIT:
                 return 1;
+                break;
+            case SDL_MOUSEWHEEL:
+            {
+                SDL_MouseWheelEvent mousewheel = e->wheel;
+                if (mousewheel.y>0) {
+                    scale_display(1.1);
+                } else {
+                    scale_display(0.9);
+                }
+            }
             default:;
                 //dblogger("Event detected");
         }
@@ -80,10 +94,13 @@ int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d scr
         return 1;
     }
     
-    Time dt = 100000;
-    system_update(sys, body_count, dt, t);
+    Time dt = 10000;
+    for (int i=0; i<100; i++) {
+        system_update(sys, body_count, dt, t);
+        *t+=dt;
+    }
+    
     render_system(sys, body_count, renderer, screen_size);
-    *t+=dt;
     return 0;
 }
 
@@ -93,9 +110,13 @@ void rungame()
     SDL_Init(SDL_INIT_VIDEO);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
     
-    Vector2d screensize = {800,800};
+    int scrx, scry;
     
-    SDL_Window *win = SDL_CreateWindow("Trajectory!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screensize.x, screensize.y, SDL_WINDOW_SHOWN);
+    
+    SDL_Window *win = SDL_CreateWindow("Trajectory!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    
+    SDL_GetWindowSize(win, &scrx, &scry);
+    Vector2d screensize = {scrx, scry};
     
     SDL_Renderer *render = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(render, 0x00, 0x00, 0x00, 0xFF);
@@ -112,16 +133,16 @@ void rungame()
     sys[2] = (Body){.mass =  1, .pos =  (Vector3d){-1e3, -1e3, 0}, .vel =  (Vector3d){.002,0,0}};
     sys[3] = (Body){.mass =  1,  .pos =  (Vector3d){5e2, 5e2, 0}, .vel = (Vector3d){-.001, 0, 0}};
     */
-    sys[0] = (Body){.name="Sun", .mass=1.988e30, .vel = {20.0,0.0,0.0}};
-    sys[1] = (Body){.name="Mercury", .mass=3.3e23, .vel={47362,0,0}, .pos={0,-5.7e10,0}};
-    sys[2] = (Body){.name="Venus", .mass=4.87e24, .vel={0,35002,0}, .pos={1.08e11, 0,0}};
-    sys[3] = (Body){.name="Earth", .mass=5.97e24, .vel={-29780, 0, 0}, .pos={0, 1.49e11,0}};
-    sys[4] = (Body){.name="Mars", .mass=6.42e23, .vel={0, -24000,0}, .pos={-2.27e11, 0,0}};
-    sys[5] = (Body){.name="Jupiter", .mass=1.89e27, .vel={-13070,0,0}, .pos={0, 7.41e11,0}};
-    sys[6] = (Body){.name="Saturn", .mass=5.68e26, .vel={9690,0,0}, .pos={0,-1.509e12,0}};
-    sys[7] = (Body){.name="Uranus", .mass=8.68e25, .vel={6800,0,0}, .pos={0,-2.875e12,0}};
-    sys[8] = (Body){.name="Neptune", .mass=1.02e26, .vel={5430,0,0}, .pos={0,-4.504e12,0}};
-    sys[9] = (Body){.name="Pluto", .mass=1.3e23, .vel={6100, 0,0}, .pos={0,-4.436e12,0}};
+    sys[0] = (Body){.name="Sun", .mass=1.988e30, .vel = {20.0,0.0,0.0}, .color = hex_to_color(COLOR_YELLOW)};
+    sys[1] = (Body){.name="Mercury", .mass=3.3e23, .vel={47362,0,0}, .pos={0,-5.7e10,0}, .color = hex_to_color(COLOR_GRAY)};
+    sys[2] = (Body){.name="Venus", .mass=4.87e24, .vel={0,35002,0}, .pos={1.08e11, 0,0}, .color = hex_to_color(COLOR_ORANGE)};
+    sys[3] = (Body){.name="Earth", .mass=5.97e24, .vel={-29780, 0, 0}, .pos={0, 1.49e11,0}, .color = hex_to_color(COLOR_BLUE)};
+    sys[4] = (Body){.name="Mars", .mass=6.42e23, .vel={0, -24000,0}, .pos={-2.27e11, 0,0}, .color = hex_to_color(COLOR_RED)};
+    sys[5] = (Body){.name="Jupiter", .mass=1.89e27, .vel={-13070,0,0}, .pos={0, 7.41e11,0}, .color = hex_to_color(COLOR_ORANGE)};
+    sys[6] = (Body){.name="Saturn", .mass=5.68e26, .vel={9690,0,0}, .pos={0,-1.509e12,0}, .color = hex_to_color(COLOR_YELLOW)};
+    sys[7] = (Body){.name="Uranus", .mass=8.68e25, .vel={6800,0,0}, .pos={0,-2.875e12,0}, .color = hex_to_color(COLOR_TEAL)};
+    sys[8] = (Body){.name="Neptune", .mass=1.02e26, .vel={5430,0,0}, .pos={0,-4.504e12,0}, .color = hex_to_color(COLOR_BLUE)};
+    sys[9] = (Body){.name="Pluto", .mass=1.3e23, .vel={6100, 0,0}, .pos={0,-4.436e12,0}, .color = hex_to_color(COLOR_GRAY)};
 
     
     set_screensize(screensize);
@@ -129,10 +150,8 @@ void rungame()
     set_minmax_coords(minmax.a, minmax.b);
     
     while (!quit) {
-        for (int i=0; i<1000; i++) {
-            if (update(sys, 10, render, screensize, &t, &e)) {
-                quit = true;
-            }
+        if (update(sys, 10, render, screensize, &t, &e)) {
+            quit = true;
         }
         
         //If we haven't elapsed the minimum per frame yet

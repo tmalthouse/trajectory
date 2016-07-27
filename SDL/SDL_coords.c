@@ -31,6 +31,11 @@ void set_screensize(Vector2d size)
     screensize = size;
 }
 
+void scale_display(double factor)
+{
+    ratio *= factor;
+}
+
 void set_minmax_coords(Vector2d tr, Vector2d bl)
 {
     top_right = tr;

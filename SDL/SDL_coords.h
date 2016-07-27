@@ -15,6 +15,7 @@
 
 void set_screensize(Vector2d size);
 void set_minmax_coords(Vector2d tr, Vector2d bl);
+void scale_display(double factor);
 Vector2d calculate_screencoord(Vector3d spacecoord);
 
 #endif /* SDL_coords_h */
