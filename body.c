@@ -221,8 +221,10 @@ void calculate_state_vectors(Body *b, Time t)
     Vector3d b_pos = bodycentric_position(altitude, true_anomaly);
     Vector3d b_vel = bodycentric_velocity(b->orbit, altitude, ecc_anomaly);
 
-    b->pos = bodycentric_to_cartesian(b->orbit, b_pos);
-    b->vel = bodycentric_to_cartesian(b->orbit, b_vel);
+    //Add the calculated position relative to the parent to the parent's absolute position.
+    b->pos = v3d_vsum(bodycentric_to_cartesian(b->orbit, b_pos), b->orbit.parent->pos);
+    //And the same with the velocity.
+    b->vel = v3d_vsum(bodycentric_to_cartesian(b->orbit, b_vel), b->orbit.parent->vel);
 
     return;
 }
@@ -323,3 +325,4 @@ uint64_t system_total_energy(Body *sys, uint64_t count)
     
     return total_e;
 }
+

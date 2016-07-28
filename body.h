@@ -40,6 +40,7 @@ typedef struct Body {
 
 typedef struct {
     Body *planets;
+    Time t;
     uint64_t count;
 } SolarSystem;
 
