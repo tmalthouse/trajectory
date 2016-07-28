@@ -199,13 +199,14 @@ Vector3d bodycentric_to_cartesian(Orbit o, Vector3d vect)
 {
     //This uses some kind of rotation matrix I found on the internet!
     Vector3d prod;
+    
     prod.x = vect.x * (cos(o.ape)*cos(o.lan) - sin(o.ape)*cos(o.inc)*sin(o.lan)) -
-             vect.y * (sin(o.ape)*cos(o.lan) + cos(o.ape)*cos(o.inc)*cos(o.lan));
+             vect.y * (sin(o.ape)*cos(o.lan) + cos(o.ape)*cos(o.inc)*sin(o.lan));
 
-    prod.y = vect.x * (cos(o.ape)*sin(o.lan) + sin(o.ape)*cos(o.inc)*sin(o.lan)) +
+    prod.y = vect.x * (cos(o.ape)*sin(o.lan) + sin(o.ape)*cos(o.inc)*cos(o.lan)) +
              vect.y * (cos(o.ape)*cos(o.inc)*cos(o.lan) - sin(o.ape)*sin(o.lan));
 
-    prod.x = vect.x * (sin(o.ape)*sin(o.inc)) +
+    prod.z = vect.x * (sin(o.ape)*sin(o.inc)) +
              vect.y * (cos(o.ape)*sin(o.inc));
 
     return prod;

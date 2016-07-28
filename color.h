@@ -33,6 +33,7 @@ typedef enum {
     COLOR_BLUE  = 0xFF313b8F,
     COLOR_TEAL  = 0xFF008080
 } BasicColor;
+//Put the warnings back on
 #pragma clang diagnostic pop
 
 Color hex_to_color(uint32_t);
