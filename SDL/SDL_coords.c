@@ -14,7 +14,9 @@
 
 static Vector2d top_right, bottom_left, midpoint;
 static Vector2d screensize;
-static double ratio;
+static double ratio, original_ratio;
+
+static double dx, dy;
 
 static double calculate_ratio(Vector2d top_right, Vector2d bottom_left)
 {
@@ -22,6 +24,7 @@ static double calculate_ratio(Vector2d top_right, Vector2d bottom_left)
     double yratio = screensize.y/(top_right.y-bottom_left.y);
     
     double ratio = (fabs(xratio) < fabs(yratio))? xratio : yratio;//Set the ratio to the smaller of the two.
+    original_ratio = ratio;
     dblogger("Ratio is %f\n", ratio);
     return ratio;
 }
@@ -50,4 +53,60 @@ Vector2d calculate_screencoord(Vector3d spacecoord)
     double ycoord = (midpoint.y-spacecoord.y)*ratio + (screensize.y/2);
     
     return (Vector2d){xcoord, ycoord};
+}
+
+void shift_display()
+{
+
+    
+    double xdist = top_right.x-bottom_left.x;
+    
+    double ydist = top_right.y-bottom_left.y;
+    
+    printf("xdist: %f, ydist: %f\n", xdist, ydist);
+    
+    top_right.x += dx*xdist*(original_ratio/ratio);
+    bottom_left.x += dx*xdist*(original_ratio/ratio);
+    midpoint.x += dx*xdist*(original_ratio/ratio);
+    
+    top_right.y += dy*ydist*(original_ratio/ratio);
+    bottom_left.y += dy*ydist*(original_ratio/ratio);
+    midpoint.y += dy*ydist*(original_ratio/ratio);
+    
+    if (dx>0) {
+        dx-=.02;
+    } else if (dx<0) {
+        dx+=.02;
+    }
+    
+    if (dy>0) {
+        dy-=.01;
+    } else if (dy<0) {
+        dy+=.01;
+    }
+    
+    printf("dx: %f, dy: %f\n", dx, dy);
+    
+    if (fabs(dx) < 0.016) dx=0;
+    if (fabs(dy) < 0.008) dy=0;
+}
+
+void change_shift(enum Direction dir)
+{
+    switch (dir) {
+        case LEFT:
+            dx+=0.1;
+            break;
+        case RIGHT:
+            dx-=0.1;
+            break;
+        case UP:
+            dy-=0.05;
+            break;
+        case DOWN:
+            dy+=0.05;
+            break;
+        default:
+            break;
+    }
 }

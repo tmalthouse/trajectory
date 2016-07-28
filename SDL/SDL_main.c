@@ -65,13 +65,14 @@ void render_system(Body *sys, uint64_t body_count, SDL_Renderer *renderer, Vecto
     SDL_RenderPresent(renderer);
 }
 
-int event_handler(SDL_Event *e)
+int event_handler(SDL_Event *e, uint64_t *steps)
 {
     while(SDL_PollEvent(e)){
         switch (e->type) {
             case SDL_QUIT:
                 return 1;
                 break;
+                
             case SDL_MOUSEWHEEL:
             {
                 SDL_MouseWheelEvent mousewheel = e->wheel;
@@ -79,6 +80,35 @@ int event_handler(SDL_Event *e)
                     scale_display(1.1);
                 } else {
                     scale_display(0.9);
+                }
+            } break;
+            
+            case SDL_KEYDOWN:
+            {
+                switch (e->key.keysym.sym) {
+                    case SDLK_UP:
+                        change_shift(UP);
+                        break;
+                    case SDLK_DOWN:
+                        change_shift(DOWN);
+                        break;
+                    case SDLK_LEFT:
+                        change_shift(LEFT);
+                        break;
+                    case SDLK_RIGHT:
+                        change_shift(RIGHT);
+                        break;
+                    case SDLK_PERIOD:
+                        *steps+=5;
+                        break;
+                    case SDLK_COMMA:
+                        if (*steps<5) {
+                            *steps=0;
+                        } else {
+                            *steps-=5;
+                        }
+                    default:
+                        break;
                 }
             }
             default:;
@@ -90,17 +120,20 @@ int event_handler(SDL_Event *e)
 
 int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d screen_size, Time *t, SDL_Event *e)
 {
-    if (event_handler(e)) {
+    static uint64_t steps;
+    
+    if (event_handler(e, &steps)) {
         return 1;
     }
     
     Time dt = 10000;
-    for (int i=0; i<100; i++) {
+    for (int i=0; i<steps; i++) {
         system_update(sys, body_count, dt, t);
         *t+=dt;
     }
     
     render_system(sys, body_count, renderer, screen_size);
+    shift_display();
     return 0;
 }
 
