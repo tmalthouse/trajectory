@@ -196,7 +196,7 @@ void rungame()
     sys[8] = (Body){.name="Neptune", .mass=1.02e26, .vel={5430,0,0}, .pos={0,-4.504e12,0}, .color = hex_to_color(COLOR_BLUE)};
     sys[9] = (Body){.name="Pluto", .mass=1.3e23, .vel={6100, 0,0}, .pos={0,-4.436e12,0}, .color = hex_to_color(COLOR_GRAY)};
     
-    sys[10] = (Body){.name="Moon", .mass=7.3e22, .vel=v3d_vsum(sys[3].vel, (Vector3d){0,1022,0}), .pos=v3d_vsum(sys[3].pos, (Vector3d){384399000,0,0}), .color=hex_to_color(COLOR_GRAY)};
+    sys[10] = (Body){.name="Moon", .mass=7.3e22, .vel=v3d_vsum(sys[3].vel, (Vector3d){0,1022,0}), .pos=v3d_vsum(sys[3].pos, (Vector3d){384399000,0,0}), .color=hex_to_color(COLOR_BLUE)};
     int bodycount = 11;
     
     set_screensize(screensize);

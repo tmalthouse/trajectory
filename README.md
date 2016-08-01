@@ -2,6 +2,8 @@
 
 A 3d solar system simulator written in C, using SDL for rendering.
 
+![screenshot](refs/screenshot.png)
+
 ### About:
 
 Trajectory is a solar system simulator, written in C. The physics is fully simulated in 3D, although the renderer is (currently) a top-down 2d view. Updates are calculated every thousand simulated seconds (every 17 minutes), which offers high precision while still remaining easy to calculate. All integration is handled using the 4th order Runge-Kutta, which minimizes error over long periods of time. The passage of time can be sped up and slowed down, making it just as easy to watch a close encounter between bodies as it happen as watching a thousand years pass by a second.
