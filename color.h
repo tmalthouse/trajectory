@@ -20,7 +20,8 @@ typedef struct {
 } Color;
 
 
-#pragma clang diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic push
 //We're not supposed to use values above MAXINT for enums, but we're not using it as an enum, but as a typed constant.
 typedef enum {
     COLOR_WHITE = 0xFFFFFFFF,
@@ -34,7 +35,7 @@ typedef enum {
     COLOR_TEAL  = 0xFF008080
 } BasicColor;
 //Put the warnings back on
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 Color hex_to_color(uint32_t);
 uint32_t color_to_hex(Color c);
