@@ -23,7 +23,7 @@ To build, simply run `make`. Run the resulting `trajectory` executable.
 
  If the libraries are installed somewhere other than /usr/lib or /usr/local/lib, edit the main Makefile to point to them.
 
- #### Building on Windows:
+#### Building on Windows:
 
  I've never tried to build this on Windows, but it doesn't rely on any POSIX functionality and all the needed libraries are cross platform—meaning it should be possible to build without MinGW or Cygwin.
 
