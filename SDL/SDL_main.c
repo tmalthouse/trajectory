@@ -45,27 +45,34 @@ Vector2dPair min_max_xy_coords(Body *sys, uint64_t count)
     return (Vector2dPair){min, max};
 }
 
-void render_system(Body *sys, uint64_t body_count, SDL_Renderer *renderer, Vector2d screen_size)
+void render_system(Body *sys, uint64_t body_count, SDL_Renderer *renderer, Vector2d screen_size, Vector2d *spos_buffer)
 {
     // First, we need to clear the screen and paint it black.
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(renderer);
+    //focus_body(sys[3]);
     
     // Then, we set the color to planet color (in this case, white for now)
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     for (uint64_t i=0; i<body_count; i++) {
-        Vector2d spos = calculate_screencoord(sys[i].pos);
-        logger("Screenpos of body %llu is %f, %f\n", i, spos.x, spos.y);
         //SDL_RenderDrawPoint(renderer, spos.x, spos.y);
         Color c = sys[i].color;
-        filledCircleRGBA(renderer, spos.x, spos.y, 4, c.r, c.g, c.b, c.a);
+        filledCircleRGBA(renderer, spos_buffer[i].x, spos_buffer[i].y, 2, c.r, c.g, c.b, c.a);
     }
     
     //Finally, we push our changes to the screen
     SDL_RenderPresent(renderer);
 }
 
-int event_handler(SDL_Event *e, uint64_t *steps)
+void calculate_spositions(Body *sys, Vector2d *spos_buffer, uint64_t count)
+{
+    for (uint64_t i=0; i<count; i++) {
+        Vector2d spos = calculate_screencoord(sys[i].pos);
+        spos_buffer[i] = spos;
+    }
+}
+
+int event_handler(SDL_Event *e, uint64_t *steps, Vector2d *spos_buffer, Body *sys, uint64_t count)
 {
     while(SDL_PollEvent(e)){
         switch (e->type) {
@@ -77,9 +84,9 @@ int event_handler(SDL_Event *e, uint64_t *steps)
             {
                 SDL_MouseWheelEvent mousewheel = e->wheel;
                 if (mousewheel.y>0) {
-                    scale_display(1.1);
+                    scale_display(1.5);
                 } else {
-                    scale_display(0.9);
+                    scale_display(0.66);
                 }
             } break;
             
@@ -111,6 +118,16 @@ int event_handler(SDL_Event *e, uint64_t *steps)
                         break;
                 }
             }
+                
+            case SDL_MOUSEBUTTONDOWN:
+            {
+                SDL_MouseButtonEvent event = e->button;
+                Vector2d mousepos = {event.x, event.y};
+                int pointed_item = item_pointed_at(spos_buffer, count, mousepos, 10);
+                if (pointed_item != -1) {
+                    focus_body(&sys[pointed_item]);
+                }
+            }
             default:;
                 //dblogger("Event detected");
         }
@@ -118,21 +135,23 @@ int event_handler(SDL_Event *e, uint64_t *steps)
     return 0;
 }
 
-int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d screen_size, Time *t, SDL_Event *e)
+int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d screen_size, Time *t, SDL_Event *e, Vector2d *spos_buffer)
 {
     static uint64_t steps;
     
-    if (event_handler(e, &steps)) {
-        return 1;
-    }
-    
-    Time dt = 10000;
+    Time dt = 1000;
     for (int i=0; i<steps; i++) {
         system_update(sys, body_count, dt, t);
         *t+=dt;
     }
     
-    render_system(sys, body_count, renderer, screen_size);
+    calculate_spositions(sys, spos_buffer, body_count);
+    
+    if (event_handler(e, &steps, spos_buffer, sys, body_count)) {
+        return 1;
+    }
+    
+    render_system(sys, body_count, renderer, screen_size, spos_buffer);
     shift_display();
     return 0;
 }
@@ -159,7 +178,7 @@ void rungame()
     uint32_t last_update_time = SDL_GetTicks();
     SDL_Event e;
     
-    Body sys[10];
+    Body sys[11];
     /*
     sys[0] = (Body){.mass =  1e8, .pos =  (Vector3d){0, 0, 0}, .vel =  (Vector3d){0,0,0}};
     sys[1] = (Body){.mass =  1, .pos =  (Vector3d){1e3, 1e3, 0}, .vel =  (Vector3d){0,.01,0}};
@@ -176,14 +195,17 @@ void rungame()
     sys[7] = (Body){.name="Uranus", .mass=8.68e25, .vel={6800,0,0}, .pos={0,-2.875e12,0}, .color = hex_to_color(COLOR_TEAL)};
     sys[8] = (Body){.name="Neptune", .mass=1.02e26, .vel={5430,0,0}, .pos={0,-4.504e12,0}, .color = hex_to_color(COLOR_BLUE)};
     sys[9] = (Body){.name="Pluto", .mass=1.3e23, .vel={6100, 0,0}, .pos={0,-4.436e12,0}, .color = hex_to_color(COLOR_GRAY)};
-
+    
+    sys[10] = (Body){.name="Moon", .mass=7.3e22, .vel=v3d_vsum(sys[3].vel, (Vector3d){0,1022,0}), .pos=v3d_vsum(sys[3].pos, (Vector3d){384399000,0,0}), .color=hex_to_color(COLOR_GRAY)};
+    int bodycount = 11;
     
     set_screensize(screensize);
-    Vector2dPair minmax = min_max_xy_coords(sys, 10);
+    Vector2dPair minmax = min_max_xy_coords(sys, bodycount);
     set_minmax_coords(minmax.a, minmax.b);
+    Vector2d screen_positions[bodycount];
     
     while (!quit) {
-        if (update(sys, 10, render, screensize, &t, &e)) {
+        if (update(sys, bodycount, render, screensize, &t, &e, screen_positions)) {
             quit = true;
         }
         
@@ -199,3 +221,4 @@ void rungame()
     SDL_DestroyWindow(win);
     end_logger();
 }
+

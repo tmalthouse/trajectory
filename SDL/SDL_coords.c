@@ -10,11 +10,14 @@
 #include <tgmath.h>
 #include "SDL_main.h"
 #include "../vector3d.h"
+#include "../vector2d.h"
 #include "../debug.h"
+#include "../body.h"
 
 static Vector2d top_right, bottom_left, midpoint;
 static Vector2d screensize;
 static double ratio, original_ratio;
+static Body *focus;
 
 static double dx, dy;
 
@@ -57,8 +60,7 @@ Vector2d calculate_screencoord(Vector3d spacecoord)
 
 void shift_display()
 {
-
-    
+    /*
     double xdist = top_right.x-bottom_left.x;
     
     double ydist = top_right.y-bottom_left.y;
@@ -89,6 +91,16 @@ void shift_display()
     
     if (fabs(dx) < 0.016) dx=0;
     if (fabs(dy) < 0.008) dy=0;
+     */
+    if (focus) {
+        midpoint.x = focus->pos.x;
+        midpoint.y = focus->pos.y;
+    }
+}
+
+void focus_body(Body *b)
+{
+    focus = b;
 }
 
 void change_shift(enum Direction dir)
@@ -109,4 +121,18 @@ void change_shift(enum Direction dir)
         default:
             break;
     }
+}
+
+int item_pointed_at(Vector2d *coords, uint64_t count, Vector2d mousecoord, float threshold)
+{
+    int closest_obj = -1;
+    double closest_dist = threshold;
+    for (uint32_t i=0; i<count; i++) {
+        double dist = v2d_absdist(mousecoord, coords[i]);
+        if (dist<closest_dist) {
+            closest_obj = i;
+            closest_dist = dist;
+        }
+    }
+    return closest_obj;
 }

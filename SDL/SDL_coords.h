@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "../vector3d.h"
 #include "../vector2d.h"
+#include "../body.h"
 
 enum Direction {
     UP,
@@ -27,6 +28,8 @@ void scale_display(double factor);
 void shift_display();
 void change_shift(enum Direction dir);
 Vector2d calculate_screencoord(Vector3d spacecoord);
+void focus_body(Body *b);
+int item_pointed_at(Vector2d *coords, uint64_t count, Vector2d mousecoord, float threshold);
 
 
 

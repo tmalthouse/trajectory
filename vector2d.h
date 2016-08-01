@@ -21,4 +21,6 @@ typedef struct {
     Vector2d b;
 } Vector2dPair;
 
+double v2d_absdist(Vector2d a, Vector2d b);
+
 #endif /* vector2d_h */
