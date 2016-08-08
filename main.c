@@ -10,6 +10,7 @@
 #include "body.h"
 #include "debug.h"
 #include "SDL/SDL_main.h"
+#include "saveload.h"
 
 
 void test();
@@ -17,7 +18,11 @@ void test();
 int main(int argc, const char * argv[]) {
     // insert code here...
     start_logger();
-    rungame();
+    FILE *system = fopen("/Users/Thomas/Desktop/mercury.cfg", "r");
+    
+    SolarSystem sys = load_and_calculate_system(system);
+    
+    rungame(sys);
     //test();
     printf("Hello, World!\n");
     return 0;

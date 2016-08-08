@@ -157,7 +157,7 @@ int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d scr
 }
 
 
-void rungame()
+void rungame(SolarSystem syss)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
