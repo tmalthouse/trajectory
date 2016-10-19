@@ -18,9 +18,9 @@ void test();
 int main(int argc, const char * argv[]) {
     // insert code here...
     start_logger();
-    FILE *system = fopen("/Users/Thomas/Desktop/mercury.cfg", "r");
+    //FILE *system = fopen("/Users/Thomas/Desktop/mercury.cfg", "r");
     
-    SolarSystem sys = load_and_calculate_system(system);
+    SolarSystem sys = (SolarSystem){};//load_and_calculate_system(system);
     
     rungame(sys);
     //test();
