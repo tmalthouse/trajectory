@@ -246,21 +246,18 @@ void euler_step(Body *b, Vector3d acc, Vector3d vel, Time dt)
     b->vel = v3d_vsum(b->vel, v3d_fmult(acc, dt));
 }
 
+
+static _Thread_local Body *update_state_vectors_lsys = NULL;
 void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt)
 {
     //We need a storage buffer for the bodies, but need a distinct one per thread (this func isn't recursive, so that won't be an issue.) However, this also means we nead C11+ to compile.
     //The memory allocated for the buffer here is freed by the destructor function, which should be attached to ALL threads by pthread_key_create.
-    static _Thread_local Body *lsys = NULL;
-    if (lsys ==NULL) {
-        lsys = calloc (1, count*sizeof(Body));
+    
+    if (update_state_vectors_lsys == NULL) {
+        update_state_vectors_lsys = calloc (1, count*sizeof(Body));
     }
     
-    //A NULL sys param is the "secret key" to resetting the buffer, and should never be called in normal use (typically, a callback is assigned to the thread to be run on exit.)
-    if (sys == NULL) {
-        free(lsys);
-        lsys = NULL;
-        return;
-    }
+    Body *lsys = update_state_vectors_lsys;
     
     memcpy(lsys, sys, count*sizeof(Body)); //We want to use a copy so we aren't disturbing any other thread/core with our orbital shiftiness
     Body *focus = &lsys[bodyid];
@@ -338,9 +335,10 @@ uint64_t system_total_energy(Body *sys, uint64_t count)
     return total_e;
 }
 
-
+/// Destructor for a thread that calls update_state_vectors anywhere. Note that this function is safe to call at any time--i.e. it doen't break internal state (the buffer will simply be reallocated) and will work even if the buffer has never been allocated (since free(NULL) is safe.)
 void update_sv_thread_destructor(void *ptr)
 {
-    update_state_vectors(NULL, 0, 0, 0);
+    free(update_state_vectors_lsys);
+    update_state_vectors_lsys = NULL;
 }
 

@@ -385,6 +385,8 @@
 		E93207DD1D2DC6680046D5CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_USE_OPTIMIZATION_PROFILE = NO;
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_PEDANTIC = YES;
 				HEADER_SEARCH_PATHS = (
 					"/Users/Thomas/code/para/epiphany-bsp/include",
@@ -396,6 +398,7 @@
 					/usr/local/Cellar/libconfig/1.6/lib,
 					/usr/local/Cellar/sdl2_gfx/1.0.1/lib,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -404,6 +407,9 @@
 		E93207DE1D2DC6680046D5CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_USE_OPTIMIZATION_PROFILE = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_PEDANTIC = YES;
 				HEADER_SEARCH_PATHS = (
 					"/Users/Thomas/code/para/epiphany-bsp/include",
@@ -416,6 +422,7 @@
 					/usr/local/Cellar/sdl2_gfx/1.0.1/lib,
 				);
 				LLVM_LTO = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
