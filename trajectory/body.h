@@ -13,6 +13,7 @@
 #include "vector3d.h"
 #include "types.h"
 #include "color.h"
+#include "constants.h"
 
 typedef struct {
     double sma;
@@ -28,14 +29,15 @@ typedef struct {
 
 
 typedef struct Body {
-    /* Persistent fields--These can and should be used across multiple timesteps (although p+v should be updated using the rk4 method at frequent intervals */
-    char name[64];
+    /* Persistent fields--These can and should be used across multiple timesteps */
+    char name[BODY_NAME_MAX_LEN];
     Orbit orbit;
     double mass;
-    Vector3d pos;
-    Vector3d vel;
     double mu;
     Color color;
+    /* Varying fields--These can and will change rapidly, and should not be stored anywhere but here. DO NOT write to these--just read them. Writing is only to be done by the integrator function or the orbital-element-calculator-thing*/
+    Vector3d pos;
+    Vector3d vel;
 } Body;
 
 typedef struct {

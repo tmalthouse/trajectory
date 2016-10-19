@@ -10,8 +10,12 @@
 #define types_h
 
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef double Time;
+
+inline static double strtotime(char *str, char **endptr) {return strtod(str, endptr);}
+
 
 typedef double(*oneargfunc)(double a);
 

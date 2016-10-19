@@ -248,7 +248,20 @@ void euler_step(Body *b, Vector3d acc, Vector3d vel, Time dt)
 
 void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt)
 {
-    Body *lsys = calloc (1, count*sizeof(Body));
+    //We need a storage buffer for the bodies, but need a distinct one per thread (this func isn't recursive, so that won't be an issue.) However, this also means we nead C11+ to compile.
+    //The memory allocated for the buffer here is freed by the destructor function, which should be attached to ALL threads by pthread_key_create.
+    static _Thread_local Body *lsys = NULL;
+    if (lsys ==NULL) {
+        lsys = calloc (1, count*sizeof(Body));
+    }
+    
+    //A NULL sys param is the "secret key" to resetting the buffer, and should never be called in normal use (typically, a callback is assigned to the thread to be run on exit.)
+    if (sys == NULL) {
+        free(lsys);
+        lsys = NULL;
+        return;
+    }
+    
     memcpy(lsys, sys, count*sizeof(Body)); //We want to use a copy so we aren't disturbing any other thread/core with our orbital shiftiness
     Body *focus = &lsys[bodyid];
     
@@ -301,7 +314,6 @@ void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt)
     
     original->vel = v_combined;
     original->pos = p_combined;
-    free(lsys);
     return;
 }
 
@@ -324,5 +336,11 @@ uint64_t system_total_energy(Body *sys, uint64_t count)
     }
     
     return total_e;
+}
+
+
+void update_sv_thread_destructor(void *ptr)
+{
+    update_state_vectors(NULL, 0, 0, 0);
 }
 

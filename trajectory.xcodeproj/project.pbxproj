@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E91B73351DB7334C000D81C8 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E91B73341DB7334C000D81C8 /* libsqlite3.tbd */; };
 		E93207D91D2DC6680046D5CB /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E93207D81D2DC6680046D5CB /* main.c */; };
 		E93207EB1D2DC6D60046D5CB /* body.c in Sources */ = {isa = PBXBuildFile; fileRef = E93207DF1D2DC6D60046D5CB /* body.c */; };
 		E93207EF1D2DC6D60046D5CB /* vector3d.c in Sources */ = {isa = PBXBuildFile; fileRef = E93207E91D2DC6D60046D5CB /* vector3d.c */; };
@@ -22,7 +23,6 @@
 		E9A7EE2F1D36A64300305023 /* SDL_main.c in Sources */ = {isa = PBXBuildFile; fileRef = E9A7EE2D1D36A64300305023 /* SDL_main.c */; };
 		E9A7EE311D36A9ED00305023 /* libSDL2-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9A7EE301D36A9ED00305023 /* libSDL2-2.0.0.dylib */; };
 		E9F90B861D49188B0062EE2C /* libSDL2_gfx-1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9F90B851D49188B0062EE2C /* libSDL2_gfx-1.0.0.dylib */; };
-		E9F90B871D4918AD0062EE2C /* libconfig.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E988DCB31D3D27FB005519E8 /* libconfig.9.dylib */; };
 		E9F90B8D1D4930D30062EE2C /* color.c in Sources */ = {isa = PBXBuildFile; fileRef = E9F90B8B1D4930D30062EE2C /* color.c */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +48,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E91B73341DB7334C000D81C8 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		E91B73361DB735EC000D81C8 /* SQL_statements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQL_statements.h; sourceTree = "<group>"; };
+		E91B73371DB76C4C000D81C8 /* notes.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = notes.md; sourceTree = "<group>"; };
 		E93207D51D2DC6680046D5CB /* trajectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = trajectory; sourceTree = BUILT_PRODUCTS_DIR; };
 		E93207D81D2DC6680046D5CB /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		E93207DF1D2DC6D60046D5CB /* body.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = body.c; sourceTree = "<group>"; };
@@ -86,7 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9F90B871D4918AD0062EE2C /* libconfig.9.dylib in Frameworks */,
+				E91B73351DB7334C000D81C8 /* libsqlite3.tbd in Frameworks */,
 				E9F90B861D49188B0062EE2C /* libSDL2_gfx-1.0.0.dylib in Frameworks */,
 				E9A7EE311D36A9ED00305023 /* libSDL2-2.0.0.dylib in Frameworks */,
 			);
@@ -102,6 +105,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E91B73331DB7334C000D81C8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E91B73341DB7334C000D81C8 /* libsqlite3.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E93207CC1D2DC6680046D5CB = {
 			isa = PBXGroup;
 			children = (
@@ -111,6 +122,7 @@
 				E93207D71D2DC6680046D5CB /* trajectory */,
 				E996A6231D3E6A1F00732E76 /* trajectory.testing */,
 				E93207D61D2DC6680046D5CB /* Products */,
+				E91B73331DB7334C000D81C8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -135,12 +147,14 @@
 				E93207E31D2DC6D60046D5CB /* constants.h */,
 				E988DCB51D3D28B5005519E8 /* saveload.c */,
 				E988DCB61D3D28B5005519E8 /* saveload.h */,
+				E91B73361DB735EC000D81C8 /* SQL_statements.h */,
 				E9F90B8B1D4930D30062EE2C /* color.c */,
 				E9F90B8C1D4930D30062EE2C /* color.h */,
 				E93333B51D3EAE04005C9BA7 /* debug.h */,
 				E93333B61D3EB031005C9BA7 /* debug.c */,
 				E93333B21D3EAA48005C9BA7 /* vector2d.c */,
 				E93333B31D3EAA48005C9BA7 /* vector2d.h */,
+				E91B73371DB76C4C000D81C8 /* notes.md */,
 				E93207E81D2DC6D60046D5CB /* types.h */,
 				E93207E91D2DC6D60046D5CB /* vector3d.c */,
 				E93207EA1D2DC6D60046D5CB /* vector3d.h */,
