@@ -9,6 +9,8 @@
 #ifndef SQL_statements_h
 #define SQL_statements_h
 
+#define NULL_TERM_STMT (-1)
+
 static const char *COUNTBODIES = "SELECT COUNT(*) AS count FROM bodies";
 static const char *GETBODIES = "SELECT * FROM bodies";
 

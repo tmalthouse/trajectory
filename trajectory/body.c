@@ -214,6 +214,13 @@ Vector3d bodycentric_to_cartesian(Orbit o, Vector3d vect)
 
 void calculate_state_vectors(Body *b, Time t)
 {
+    //If the body is root, pos and vel are 0.
+    if (b->orbit.parent == NULL) {
+        b->pos = V3D_0_VECTOR;
+        b->vel = V3D_0_VECTOR;
+        return;
+    }
+    
     double ecc_anomaly = ecc_ano_from_mean_ano(mean_ano_at_t(b->orbit, t), b->orbit.ecc);
     double true_anomaly = true_ano_from_ecc_ano(ecc_anomaly, b->orbit.ecc);
     double altitude = orbital_height_from_ecc_ano(b->orbit, ecc_anomaly);

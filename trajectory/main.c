@@ -20,7 +20,7 @@ int main(int argc, const char * argv[]) {
     start_logger();
     //FILE *system = fopen("/Users/Thomas/Desktop/mercury.cfg", "r");
     
-    SolarSystem sys = (SolarSystem){};//load_and_calculate_system(system);
+    SolarSystem sys = load_and_calculate_system("/Users/Thomas/Documents/XCode/trajectory/trajectory/SolarSystem.sqlite3");
     
     rungame(sys);
     //test();

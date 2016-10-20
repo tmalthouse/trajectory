@@ -33,6 +33,7 @@ void logger(char *fmt, ...)
     va_start(args, fmt);
     vfprintf(logfile, fmt, args);
     va_end(args);
+    putc('\n', logfile);
 }
 
 void dblogger(char *fmt, ...)

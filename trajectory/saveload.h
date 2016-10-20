@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "body.h"
 
-SolarSystem load_and_calculate_system(FILE *system_file);
+SolarSystem load_and_calculate_system(char *filename);
 
 
 #endif /* saveload_h */
