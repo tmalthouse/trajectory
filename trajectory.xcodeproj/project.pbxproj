@@ -65,7 +65,6 @@
 		E93333B31D3EAA48005C9BA7 /* vector2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector2d.h; sourceTree = "<group>"; };
 		E93333B51D3EAE04005C9BA7 /* debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		E93333B61D3EB031005C9BA7 /* debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debug.c; sourceTree = "<group>"; };
-		E988DCB31D3D27FB005519E8 /* libconfig.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libconfig.9.dylib; path = ../../../../../usr/local/Cellar/libconfig/1.6/lib/libconfig.9.dylib; sourceTree = "<group>"; };
 		E988DCB51D3D28B5005519E8 /* saveload.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saveload.c; sourceTree = "<group>"; };
 		E988DCB61D3D28B5005519E8 /* saveload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveload.h; sourceTree = "<group>"; };
 		E996A61B1D3E68FE00732E76 /* test_vector3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_vector3d.c; path = Tests/test_vector3d.c; sourceTree = "<group>"; };
@@ -118,7 +117,6 @@
 			children = (
 				E9A7EE301D36A9ED00305023 /* libSDL2-2.0.0.dylib */,
 				E9F90B851D49188B0062EE2C /* libSDL2_gfx-1.0.0.dylib */,
-				E988DCB31D3D27FB005519E8 /* libconfig.9.dylib */,
 				E93207D71D2DC6680046D5CB /* trajectory */,
 				E996A6231D3E6A1F00732E76 /* trajectory.testing */,
 				E93207D61D2DC6680046D5CB /* Products */,
@@ -386,8 +384,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_USE_OPTIMIZATION_PROFILE = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = (
 					"/Users/Thomas/code/para/epiphany-bsp/include",
 					/usr/local/include,
@@ -408,9 +408,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_USE_OPTIMIZATION_PROFILE = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = (
 					"/Users/Thomas/code/para/epiphany-bsp/include",
 					/usr/local/include,

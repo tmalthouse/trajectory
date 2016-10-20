@@ -51,7 +51,7 @@ typedef struct {
     number of iterations to do, it returns an approximation of the zero of f. Iterations are capped at 255 because there's really no possible
     reason for more.
  */
-double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uint8_t iterations);
+double newton_raphson_iterate(unaryfunc f, unaryfunc fderiv, double guess, uint8_t iterations);
 
 /// Returns the grav. parameter (mu) of the given body.
 double calculate_mu(Body b);

@@ -230,7 +230,7 @@ void calculate_state_vectors(Body *b, Time t)
 }
 
 
-double newton_raphson_iterate(oneargfunc f, oneargfunc fderiv, double guess, uint8_t iterations)
+double newton_raphson_iterate(unaryfunc f, unaryfunc fderiv, double guess, uint8_t iterations)
 {
     if (iterations == 0) {
         return guess;
@@ -328,7 +328,7 @@ uint64_t system_total_energy(Body *sys, uint64_t count)
 {
     uint64_t total_e = 0;
     
-    for (int i=0; i<count; i++) {
+    for (uint64_t i=0; i<count; i++) {
         total_e += 0.5 * sys[i].mass + pow(v3d_abs(sys[i].vel), 2);
     }
     

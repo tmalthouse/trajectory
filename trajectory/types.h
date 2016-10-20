@@ -17,7 +17,7 @@ typedef double Time;
 inline static double strtotime(char *str, char **endptr) {return strtod(str, endptr);}
 
 
-typedef double(*oneargfunc)(double a);
+typedef double(*unaryfunc)(double a);
 
 
 #endif /* types_h */

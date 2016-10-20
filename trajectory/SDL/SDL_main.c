@@ -57,7 +57,7 @@ void render_system(Body *sys, uint64_t body_count, SDL_Renderer *renderer, Vecto
     for (uint64_t i=0; i<body_count; i++) {
         //SDL_RenderDrawPoint(renderer, spos.x, spos.y);
         Color c = sys[i].color;
-        filledCircleRGBA(renderer, spos_buffer[i].x, spos_buffer[i].y, 2, c.r, c.g, c.b, c.a);
+        filledCircleRGBA(renderer, (int16_t)spos_buffer[i].x, (int16_t)spos_buffer[i].y, 2, c.r, c.g, c.b, c.a);
     }
     
     //Finally, we push our changes to the screen
@@ -140,7 +140,7 @@ int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d scr
     static uint64_t steps;
     
     Time dt = 1000;
-    for (int i=0; i<steps; i++) {
+    for (uint64_t i=0; i<steps; i++) {
         system_update(sys, body_count, dt, t);
         *t+=dt;
     }
@@ -179,12 +179,6 @@ void rungame(SolarSystem syss)
     SDL_Event e;
     
     Body sys[11];
-    /*
-    sys[0] = (Body){.mass =  1e8, .pos =  (Vector3d){0, 0, 0}, .vel =  (Vector3d){0,0,0}};
-    sys[1] = (Body){.mass =  1, .pos =  (Vector3d){1e3, 1e3, 0}, .vel =  (Vector3d){0,.01,0}};
-    sys[2] = (Body){.mass =  1, .pos =  (Vector3d){-1e3, -1e3, 0}, .vel =  (Vector3d){.002,0,0}};
-    sys[3] = (Body){.mass =  1,  .pos =  (Vector3d){5e2, 5e2, 0}, .vel = (Vector3d){-.001, 0, 0}};
-    */
     sys[0] = (Body){.name="Sun", .mass=1.988e30, .vel = {20.0,0.0,0.0}, .color = hex_to_color(COLOR_YELLOW)};
     sys[1] = (Body){.name="Mercury", .mass=3.3e23, .vel={47362,0,0}, .pos={0,-5.7e10,0}, .color = hex_to_color(COLOR_GRAY)};
     sys[2] = (Body){.name="Venus", .mass=4.87e24, .vel={0,35002,0}, .pos={1.08e11, 0,0}, .color = hex_to_color(COLOR_ORANGE)};

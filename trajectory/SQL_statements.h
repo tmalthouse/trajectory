@@ -9,7 +9,8 @@
 #ifndef SQL_statements_h
 #define SQL_statements_h
 
-static const char *GETBODIES = "select * from bodies";
+static const char *COUNTBODIES = "SELECT COUNT(*) AS count FROM bodies";
+static const char *GETBODIES = "SELECT * FROM bodies";
 
 
 
