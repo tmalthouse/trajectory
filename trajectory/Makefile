@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -O3
-LDFLAGS = -lSDL2 -lSDL2_gfx -lconfig -lm
+LDFLAGS = -lSDL2 -lSDL2_gfx -lsqlite3 -lm
 
 OUTPUT = trajectory
 
