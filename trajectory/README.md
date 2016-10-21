@@ -38,10 +38,9 @@ By default, the system is paused. Hold the `.`(period) button to speed up the pa
 
 ### Custom solar systems:
 
-Our solar system is hardcoded at the moment. However, I'm working on config-loading functionality (see the WIP in saveload.c!) that will allow solar systems of any size to be read from a config file.
+Solar systems are loaded via sqlite. Use the `SolarSystem.sqlite3` as an example.
 
 ### TODO:
-* Add config loading/printing
 * Add a simple 3d renderer (probably still using SDL)
 * Add tools to change orbits in-game
 * Implement variable timesteps—bodies with lots of acceleration get updated frequently, while far-flung bodies only get updated rarely.
