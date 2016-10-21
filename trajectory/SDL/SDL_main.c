@@ -137,7 +137,7 @@ int event_handler(SDL_Event *e, uint64_t *steps, Vector2d *spos_buffer, Body *sy
 
 int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d screen_size, Time *t, SDL_Event *e, Vector2d *spos_buffer)
 {
-    static uint64_t steps;
+    static uint64_t steps = 100;
     
     Time dt = 1000;
     for (uint64_t i=0; i<steps; i++) {
