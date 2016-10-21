@@ -16,10 +16,10 @@ To build, simply run `make`. Run the resulting `trajectory` executable.
  Trajectory needs the `SDL2`, `SDL2_gfx`, and `sqlite3` libraries installed. If you don't have them, you can download them with your package manager:
 
 
- `brew install SDL2 SDL2_gfx libconfig` (on OSX)
+ `brew install SDL2 SDL2_gfx` (on OSX)
 
 
- `sudo apt install SDL2 SDL2_gfx libconfig` (on Debian Linux)
+ `sudo apt install SDL2 SDL2_gfx sqlite3` (on Debian Linux)
 
  If the libraries are installed somewhere other than /usr/lib or /usr/local/lib, edit the main Makefile to point to them.
 
