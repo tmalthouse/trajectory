@@ -261,6 +261,7 @@ void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt)
     //The memory allocated for the buffer here is freed by the destructor function, which should be attached to ALL threads by pthread_key_create.
     
     if (update_state_vectors_lsys == NULL) {
+        logger("Allocating update_state_vectors buffer. This should only happen on start.");
         update_state_vectors_lsys = calloc (1, count*sizeof(Body));
     }
     

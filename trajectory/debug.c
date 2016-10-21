@@ -24,7 +24,7 @@ void start_logger()
         perror("File error");
         exit(EXIT_FAILURE);
     }
-    //logfile = stdout;
+    logfile = stdout;
 }
 
 void logger(char *fmt, ...)
