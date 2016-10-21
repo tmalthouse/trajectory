@@ -21,15 +21,15 @@ static Body *focus;
 
 static double dx, dy;
 
-static double calculate_ratio(Vector2d top_right, Vector2d bottom_left)
+static double calculate_ratio(Vector2d tr, Vector2d bl)
 {
-    double xratio = screensize.x/(bottom_left.x-top_right.x);
-    double yratio = screensize.y/(top_right.y-bottom_left.y);
+    double xratio = screensize.x/(bl.x-tr.x);
+    double yratio = screensize.y/(tr.y-bl.y);
     
-    double ratio = (fabs(xratio) < fabs(yratio))? xratio : yratio;//Set the ratio to the smaller of the two.
-    original_ratio = ratio;
-    dblogger("Ratio is %f\n", ratio);
-    return ratio;
+    double lratio = (fabs(xratio) < fabs(yratio))? xratio : yratio;//Set the ratio to the smaller of the two.
+    original_ratio = lratio;
+    dblogger("Ratio is %f\n", lratio);
+    return lratio;
 }
 
 void set_screensize(Vector2d size)

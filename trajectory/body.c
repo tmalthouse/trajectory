@@ -163,10 +163,10 @@ double mean_ano_at_t(Orbit o, Time t)
     return fmod(raw_ano, PI*2);
 }
 
-double true_ano_from_ecc_ano(double ecc_ano, double ecc)
+double true_ano_from_ecc_ano(double ecc_ano, double eccentricity)
 {
-    double num = sqrt(1+ecc)*sin(ecc_ano/2);
-    double den = sqrt(1-ecc)*cos(ecc_ano/2);
+    double num = sqrt(1+eccentricity)*sin(ecc_ano/2);
+    double den = sqrt(1-eccentricity)*cos(ecc_ano/2);
     return 2*atan2(num,den);
 }
 
@@ -349,3 +349,6 @@ void update_sv_thread_destructor(void *ptr)
     update_state_vectors_lsys = NULL;
 }
 
+void print_body_info(Body b) {
+    printf("For body %s:\n Mass=%f. SMA=%f. Pos={%f,%f,%f}.\n Vel={%f,%f,%f}\n", b.name, b.mass, b.orbit.sma, b.pos.x, b.pos.y, b.pos.z, b.vel.x, b.vel.y, b.vel.z);
+}

@@ -130,5 +130,7 @@ void system_update(Body *sys, uint64_t count, Time dt, Time *t);
 
 uint64_t system_total_energy(Body *sys, uint64_t count);
 
+void print_body_info(Body b);
+
 
 #endif /* body_h */

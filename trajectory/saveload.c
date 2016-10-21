@@ -22,6 +22,8 @@ struct db_body {
     uint64_t root_id;
 };
 
+/*~/~/~/~/~/~/~/~/~/~*/
+
 static uint64_t djb2_hash(const char *str)
 {
     uint64_t hash = 5381;
@@ -58,6 +60,9 @@ static int fill_body_field(sqlite3_stmt *stmt, struct db_body *b, int icol)
     }
     else if (djb2_hash("root_id") == col_name_hashed) {
         b->root_id = sqlite3_column_int(stmt, icol);
+    }
+    else if (djb2_hash("color") == col_name_hashed) {
+        b->b.color = hex_to_color((uint32_t)strtol((const char*)sqlite3_column_text(stmt, icol), NULL, 16));
     }
     else if (djb2_hash("name") == col_name_hashed) {
         strlcpy(b->b.name, (const char*)sqlite3_column_text(stmt, icol), BODY_NAME_MAX_LEN);
@@ -141,9 +146,14 @@ SolarSystem load_system(char *filename)
     for (uint64_t i=0; i<system.count; i++) {
         uint64_t root_id = body_buffer[i].root_id;
         
+        // If the body doesn't have a root id--i.e. it is the root.
+        if (root_id == 0) {
+            system.planets[i].orbit.parent = NULL;
+        }
+        
         //Now we find the corresponding body
         for (uint64_t j=0; j<system.count; j++) {
-            if (root_id == 0) {
+            if (root_id == body_buffer[j].db_id) {
                 system.planets[i].orbit.parent = &(system.planets[j]);
                 break;
             }
@@ -178,5 +188,8 @@ SolarSystem load_and_calculate_system(char *filename)
     }
     
     system_calculate_state_vectors(&s);
+    for (uint64_t i=0; i<s.count; i++) {
+        print_body_info(s.planets[i]);
+    }
     return s;
 }

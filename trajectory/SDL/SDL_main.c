@@ -213,6 +213,7 @@ void rungame(SolarSystem syss)
         last_update_time = SDL_GetTicks();
     }
     
+    logger("We're quitting! This is the normal quitting process.");
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(win);
     end_logger();

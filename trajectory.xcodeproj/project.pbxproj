@@ -387,6 +387,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = (
 					"/Users/Thomas/code/para/epiphany-bsp/include",
@@ -412,6 +413,7 @@
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = (
 					"/Users/Thomas/code/para/epiphany-bsp/include",
