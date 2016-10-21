@@ -13,7 +13,7 @@ Trajectory is a solar system simulator, written in C. The physics is fully simul
 To build, simply run `make`. Run the resulting `trajectory` executable.
 
 ### Dependencies:
- Trajectory needs the `SDL2`, `SDL2_gfx`, and `libconfig` libraries installed. If you don't have them, you can download them with your package manager:
+ Trajectory needs the `SDL2`, `SDL2_gfx`, and `sqlite3` libraries installed. If you don't have them, you can download them with your package manager:
 
 
  `brew install SDL2 SDL2_gfx libconfig` (on OSX)
