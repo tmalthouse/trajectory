@@ -59,16 +59,17 @@ Vector3d node_vector(Vector3d h)
     return v3d_xprod(V3D_K_VECTOR, h);
 }
 
-Vector3d eccentricity_vector(double parent_mu, Vector3d r, Vector3d v)
+Vector3d eccentricity_vector(double parent_mu, Vector3d r, Vector3d v, Vector3d h)
 {
-    double inv_mu = (1/parent_mu);
-    double v_sq = pow(v3d_abs(v), 2);
-
-    Vector3d r_adj = v3d_fmult(r, v_sq - (parent_mu/v3d_abs(r)));
-
-    return v3d_fmult(v3d_vdiff(r_adj,
-                               v3d_fmult(v, v3d_dotprod(r, v))),
-                     inv_mu);
+    double inv_mu = 1/parent_mu;
+    double abs_pos = v3d_abs(r);
+    
+    Vector3d vel_cross_mom = v3d_xprod(v, h);
+    Vector3d vcm_div_mu = v3d_fmult(vel_cross_mom, inv_mu);
+    
+    Vector3d pos_div_abs = v3d_fmult(r, 1/abs_pos);
+    
+    return v3d_vdiff(vcm_div_mu, pos_div_abs);
 }
 
 double orb_parameter(Vector3d h, double parent_mu)
@@ -236,6 +237,43 @@ void calculate_state_vectors(Body *b, Time t)
     return;
 }
 
+double orb_sma (Vector3d r, Vector3d v, double parent_mu)
+{
+    return 1/((2/v3d_abs(r)) - (pow(v3d_abs(v), 2)/parent_mu));
+}
+
+void calculate_orbit_params(Body *b)
+{
+    Vector3d pos, vel;
+    
+    if (b->orbit.parent == NULL) {
+        //If it's the root body, there are no real orbital params to speak of.
+        b->orbit = (Orbit){0};
+        return;
+    } else {
+        pos = v3d_vdiff(b->pos, b->orbit.parent->pos);
+        vel = v3d_vdiff(b->vel, b->orbit.parent->vel);
+    }
+    
+    Vector3d h = ang_mom_h(pos, vel);
+    Vector3d e_vect = eccentricity_vector(b->orbit.parent->mu, pos, vel, h);
+    
+    Vector3d n_vect = node_vector(h);
+    double t_ano = true_anomaly(e_vect, pos, vel);
+    
+    double inc = orb_inclination(h);
+    double eccentr = orb_eccentricity(e_vect);
+    double e_ano = ecc_anomaly(eccentr, t_ano);
+    double lan = orb_long_asc_node(n_vect);
+    double ape = arg_of_periapsis(n_vect, e_vect);
+    double m_ano = mean_anomaly(e_ano, eccentr);
+    double sma = orb_sma(pos, vel, b->orbit.parent->mu);
+    
+    b->orbit = (Orbit){.sma = sma, .inc = inc, .ecc = eccentr,
+                       .lan = lan, .ape = ape, .mna = m_ano,
+                       .epoch = 0};
+}
+
 
 double newton_raphson_iterate(unaryfunc f, unaryfunc fderiv, double guess, uint8_t iterations)
 {
@@ -351,5 +389,5 @@ void update_sv_thread_destructor(void *ptr)
 }
 
 void print_body_info(Body b) {
-    printf("For body %s:\n Mass=%f. SMA=%f. Pos={%f,%f,%f}.\n Vel={%f,%f,%f}\n", b.name, b.mass, b.orbit.sma, b.pos.x, b.pos.y, b.pos.z, b.vel.x, b.vel.y, b.vel.z);
+    logger("For body %s:\n Mass=%f. SMA=%f. Pos={%f,%f,%f}.\n Vel={%f,%f,%f}\n", b.name, b.mass, b.orbit.sma, b.pos.x, b.pos.y, b.pos.z, b.vel.x, b.vel.y, b.vel.z);
 }

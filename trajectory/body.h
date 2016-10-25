@@ -72,7 +72,7 @@ Vector3d ang_mom_h(Vector3d r, Vector3d v);
 Vector3d node_vector(Vector3d h);
 
 /// eccentricity vector calculates the e vector given the parent's mu and state vectors.
-Vector3d eccentricity_vector(double parent_mu, Vector3d r, Vector3d v);
+Vector3d eccentricity_vector(double parent_mu, Vector3d r, Vector3d v, Vector3d h);
 
 /// orb_parameter returns the orbital parameter given the ang. momentum and parent's mu value. You'll probably never need to call this directly.
 double orb_parameter(Vector3d h, double parent_mu);
@@ -121,6 +121,9 @@ Vector3d bodycentric_to_cartesian(Orbit o, Vector3d vect);
 
 /// Given a body and its orbital elements, calculate its position and velocity at time t
 void calculate_state_vectors(Body *b, Time t);
+
+/// Given a body and its state vectors, calculate the orbital elements. The opposite of calculate_state_vectors
+void calculate_orbit_params(Body *b);
 
 /// Update a body's state vectors after a given timestep dt. Uses the very accurate Runge-Kutta 4 integration
 void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt);

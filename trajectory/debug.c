@@ -12,13 +12,21 @@
 #include <string.h>
 #include <unistd.h>
 
-static const char log_path[] = "/Users/Thomas/Desktop/trajectory.log";
+#define log_path "/Users/Thomas/Desktop/trajectory.log"
 static FILE *logfile;
 
 
 void start_logger()
 {
     logfile = fopen(log_path, "w");
+    
+#ifdef __APPLE__
+    system("system_profiler SPHardwareDataType > " log_path);
+#elif __LINUX__
+    system("lscpu > " log_path);
+#else
+    logger("Unsupported OS! Things may not work right!");
+#endif
 
     if (!logfile) {
         perror("File error");
