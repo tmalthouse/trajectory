@@ -56,7 +56,9 @@ static int fill_body_field(sqlite3_stmt *stmt, struct db_body *b, int icol)
     uint64_t col_name_hashed = djb2_hash(sqlite3_column_name(stmt, icol));
     
     if (djb2_hash("id") == col_name_hashed) {
-        b->db_id = sqlite3_column_int(stmt, icol);
+        int id = sqlite3_column_int(stmt, icol);
+        b->db_id = id;
+        b->b.id = id;
     }
     else if (djb2_hash("root_id") == col_name_hashed) {
         b->root_id = sqlite3_column_int(stmt, icol);
@@ -95,7 +97,7 @@ static int fill_body_field(sqlite3_stmt *stmt, struct db_body *b, int icol)
     return 0;
 }
 
-SolarSystem load_system(char *filename)
+static SolarSystem load_system(const char *filename)
 {
     SolarSystem system = {};
     
@@ -118,7 +120,7 @@ SolarSystem load_system(char *filename)
     struct db_body *body_buffer = calloc(sizeof(struct db_body), rows);
     
     sqlite3_stmt *getbodies;
-    status = sqlite3_prepare_v2(db, GETBODIES, NULL_TERM_STMT, &getbodies, NULL);
+    status = sqlite3_prepare_v2(db, GETBODIES, NULL_TERMINATED_STMT, &getbodies, NULL);
     if (status) {
         goto error;
     }
@@ -142,7 +144,7 @@ SolarSystem load_system(char *filename)
         system.planets[i] = body_buffer[i].b;
     }
     
-    //And match up the root body pointers (a yuuge mess!)
+    //And match up the root body pointers)
     for (uint64_t i=0; i<system.count; i++) {
         uint64_t root_id = body_buffer[i].root_id;
         
@@ -171,7 +173,7 @@ error:
     exit(EXIT_FAILURE);
 }
 
-void system_calculate_state_vectors(SolarSystem *s)
+static void system_calculate_state_vectors(SolarSystem *s)
 {
     for (uint64_t i=0; i<s->count; i++) {
         calculate_state_vectors(&s->planets[i], s->t);
@@ -179,7 +181,7 @@ void system_calculate_state_vectors(SolarSystem *s)
     return;
 }
 
-SolarSystem load_and_calculate_system(char *filename)
+SolarSystem load_and_calculate_system(const char *filename)
 {
     SolarSystem s = load_system(filename);
     
@@ -193,3 +195,74 @@ SolarSystem load_and_calculate_system(char *filename)
     }
     return s;
 }
+
+//And here we have functions for writing to the database
+/*~*~*~*~*~*~*~*~*~*/
+
+int store_system (SolarSystem s, const char *db_filename)
+{
+    logger("Saving state...");
+    
+    sqlite3 *db;
+    int status = sqlite3_open(db_filename, &db);
+    if (status) {
+        goto error;
+    }
+    
+    sqlite3_stmt *stmt;
+    status = sqlite3_prepare_v2(db, UPDATEBODY, NULL_TERMINATED_STMT, &stmt, NULL);
+    if (status) {
+        goto error;
+    }
+    
+    /*"UPDATE bodies SET semimajoraxis='?1', eccentricity='?2', inclination='?3', arg_of_periapsis=':?4', long_ascend_node='?5', mean_ano_epoch='?6', time_since_epoch='?7' WHERE id='?8'"*/
+    for (uint64_t i=0; i<s.count; i++) {
+        Body b = s.planets[i];
+        logger("Saving %s...", b.name);
+        
+        if (b.orbit.sma == 0) {
+            //We don't need to update the root body's orbit, since it's root.
+            logger("Done saving body %s as root", b.name);
+            continue;
+        }
+        int bind_status = 0;
+        
+        bind_status += sqlite3_bind_double(stmt, 1, b.orbit.sma);
+        bind_status += sqlite3_bind_double(stmt, 2, b.orbit.ecc);
+        bind_status += sqlite3_bind_double(stmt, 3, b.orbit.inc);
+        bind_status += sqlite3_bind_double(stmt, 4, b.orbit.ape);
+        bind_status += sqlite3_bind_double(stmt, 5, b.orbit.lan);
+        bind_status += sqlite3_bind_double(stmt, 6, b.orbit.mna);
+        bind_status += sqlite3_bind_double(stmt, 7, b.orbit.epoch);
+        
+        bind_status += sqlite3_bind_int(stmt, 8, (int)b.id);
+        
+        if (bind_status) {
+            goto error;
+        }
+        
+        
+        status = 0;
+        status += sqlite3_step(stmt);
+        
+        status += sqlite3_clear_bindings(stmt);
+        status += sqlite3_reset(stmt);
+        /*
+        if (status) {
+            goto error;
+        }*/
+        
+        logger("Done saving body %s", b.name);
+    }
+    
+    sqlite3_finalize(stmt);
+    
+    return 0;
+
+error:
+    
+    logger("Database error: %s\n", sqlite3_errmsg(db));
+    sqlite3_close(db);
+    return 1;
+}
+

@@ -12,16 +12,19 @@
 #include "SDL/SDL_main.h"
 #include "saveload.h"
 
+const char *db ="/Users/Thomas/Documents/xcode/trajectory/trajectory/SolarSystem.sqlite3";
 
-void test();
 
 int main(int argc, const char *argv[]) {
 
     start_logger();
     
-    SolarSystem sys = load_and_calculate_system("/Users/Thomas/Documents/xcode/trajectory/trajectory/SolarSystem.sqlite3");
+    SolarSystem sys = load_and_calculate_system(db);
     
     rungame(sys);
+    
+    store_system(sys, db);
 
+    end_logger();
     return 0;
 }

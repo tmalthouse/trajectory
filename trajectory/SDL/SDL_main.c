@@ -106,14 +106,15 @@ int event_handler(SDL_Event *e, uint64_t *steps, Vector2d *spos_buffer, Body *sy
                         change_shift(RIGHT);
                         break;
                     case SDLK_PERIOD:
-                        *steps+=5;
+                        *steps+=10;
                         break;
                     case SDLK_COMMA:
-                        if (*steps<5) {
+                        if (*steps<10) {
                             *steps=0;
                         } else {
-                            *steps-=5;
+                            *steps-=10;
                         }
+                        break;
                     default:
                         break;
                 }
@@ -127,6 +128,7 @@ int event_handler(SDL_Event *e, uint64_t *steps, Vector2d *spos_buffer, Body *sy
                 if (pointed_item != -1) {
                     focus_body(&sys[pointed_item]);
                 }
+                break;
             }
             default:;
                 //dblogger("Event detected");
@@ -135,29 +137,29 @@ int event_handler(SDL_Event *e, uint64_t *steps, Vector2d *spos_buffer, Body *sy
     return 0;
 }
 
-int update(Body *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d screen_size, Time *t, SDL_Event *e, Vector2d *spos_buffer)
+int update(SolarSystem *sys, uint64_t body_count, SDL_Renderer *renderer,  Vector2d screen_size, Time *t, SDL_Event *e, Vector2d *spos_buffer)
 {
-    static uint64_t steps = 100;
+    static uint64_t steps = 200;
     
     Time dt = 1000;
     for (uint64_t i=0; i<steps; i++) {
-        system_update(sys, body_count, dt, t);
+        system_update(sys->planets, body_count, dt, t);
         *t+=dt;
     }
     
-    calculate_spositions(sys, spos_buffer, body_count);
+    calculate_spositions(sys->planets, spos_buffer, body_count);
     
-    if (event_handler(e, &steps, spos_buffer, sys, body_count)) {
+    if (event_handler(e, &steps, spos_buffer, sys->planets, body_count)) {
         return 1;
     }
     
-    render_system(sys, body_count, renderer, screen_size, spos_buffer);
+    render_system(sys->planets, body_count, renderer, screen_size, spos_buffer);
     shift_display();
     return 0;
 }
 
 
-void rungame(SolarSystem syss)
+void rungame(SolarSystem sys)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
@@ -177,31 +179,16 @@ void rungame(SolarSystem syss)
     Time t=0;
     uint32_t last_update_time = SDL_GetTicks();
     SDL_Event e;
-    /*
-    Body sys[11];
-    sys[0] = (Body){.name="Sun", .mass=1.988e30, .vel = {20.0,0.0,0.0}, .color = hex_to_color(COLOR_YELLOW)};
-    sys[1] = (Body){.name="Mercury", .mass=3.3e23, .vel={47362,0,0}, .pos={0,-5.7e10,0}, .color = hex_to_color(COLOR_GRAY)};
-    sys[2] = (Body){.name="Venus", .mass=4.87e24, .vel={0,35002,0}, .pos={1.08e11, 0,0}, .color = hex_to_color(COLOR_ORANGE)};
-    sys[3] = (Body){.name="Earth", .mass=5.97e24, .vel={-29780, 0, 0}, .pos={0, 1.49e11,0}, .color = hex_to_color(COLOR_BLUE)};
-    sys[4] = (Body){.name="Mars", .mass=6.42e23, .vel={0, -24000,0}, .pos={-2.27e11, 0,0}, .color = hex_to_color(COLOR_RED)};
-    sys[5] = (Body){.name="Jupiter", .mass=1.89e27, .vel={-13070,0,0}, .pos={0, 7.41e11,0}, .color = hex_to_color(COLOR_ORANGE)};
-    sys[6] = (Body){.name="Saturn", .mass=5.68e26, .vel={9690,0,0}, .pos={0,-1.509e12,0}, .color = hex_to_color(COLOR_YELLOW)};
-    sys[7] = (Body){.name="Uranus", .mass=8.68e25, .vel={6800,0,0}, .pos={0,-2.875e12,0}, .color = hex_to_color(COLOR_TEAL)};
-    sys[8] = (Body){.name="Neptune", .mass=1.02e26, .vel={5430,0,0}, .pos={0,-4.504e12,0}, .color = hex_to_color(COLOR_BLUE)};
-    sys[9] = (Body){.name="Pluto", .mass=1.3e23, .vel={6100, 0,0}, .pos={0,-4.436e12,0}, .color = hex_to_color(COLOR_GRAY)};
-    
-    sys[10] = (Body){.name="Moon", .mass=7.3e22, .vel=v3d_vsum(sys[3].vel, (Vector3d){0,1022,0}), .pos=v3d_vsum(sys[3].pos, (Vector3d){384399000,0,0}), .color=hex_to_color(COLOR_BLUE)};*/
-   
-    int bodycount = (int)syss.count;
-    Body *sys = syss.planets;
+
+    int bodycount = (int)sys.count;
     
     set_screensize(screensize);
-    Vector2dPair minmax = min_max_xy_coords(sys, bodycount);
+    Vector2dPair minmax = min_max_xy_coords(sys.planets, bodycount);
     set_minmax_coords(minmax.a, minmax.b);
     Vector2d screen_positions[bodycount];
     
     while (!quit) {
-        if (update(sys, bodycount, render, screensize, &t, &e, screen_positions)) {
+        if (update(&sys, bodycount, render, screensize, &t, &e, screen_positions)) {
             quit = true;
         }
         
@@ -216,6 +203,6 @@ void rungame(SolarSystem syss)
     logger("We're quitting! This is the normal quitting process.");
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(win);
-    end_logger();
+    
 }
 

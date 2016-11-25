@@ -388,6 +388,7 @@ void update_sv_thread_destructor(void *ptr)
     update_state_vectors_lsys = NULL;
 }
 
-void print_body_info(Body b) {
+void print_body_info(Body b)
+{
     logger("For body %s:\n Mass=%f. SMA=%f. Pos={%f,%f,%f}.\n Vel={%f,%f,%f}\n", b.name, b.mass, b.orbit.sma, b.pos.x, b.pos.y, b.pos.z, b.vel.x, b.vel.y, b.vel.z);
 }

@@ -12,7 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define log_path "/Users/Thomas/Desktop/trajectory.log"
+static const char *log_path = "/Users/Thomas/Desktop/trajectory.log";
 static FILE *logfile;
 
 
@@ -20,28 +20,28 @@ void start_logger()
 {
     logfile = fopen(log_path, "w");
     
-#ifdef __APPLE__
-    system("system_profiler SPHardwareDataType > " log_path);
-#elif __LINUX__
-    system("lscpu > " log_path);
-#else
-    logger("Unsupported OS! Things may not work right!");
-#endif
 
     if (!logfile) {
         perror("File error");
         exit(EXIT_FAILURE);
     }
-    logfile = stdout;
+    // logfile = stdout;
 }
 
 void logger(char *fmt, ...)
 {
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(logfile, fmt, args);
-    va_end(args);
-    putc('\n', logfile);
+    if (logfile) {
+        va_list args;
+        va_start(args, fmt);
+        vfprintf(logfile, fmt, args);
+        va_end(args);
+        putc('\n', logfile);
+        fflush(logfile);
+        return;
+    }
+    
+    //Outputting to stderr probably isn't all that useful, but it's the best we can do without a logfile
+    fprintf(stderr, "logfile is NULL! Did you forget to initialize it or prematurely close it?");
 }
 
 void dblogger(char *fmt, ...)
@@ -57,4 +57,5 @@ void dblogger(char *fmt, ...)
 void end_logger()
 {
     fclose(logfile);
+    logfile = NULL;
 }

@@ -400,7 +400,7 @@
 					/usr/local/Cellar/sdl2_gfx/1.0.1/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = "-ftrapv";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -427,7 +427,7 @@
 				);
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = "-ftrapv";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -O3
+CFLAGS = -O3 -I/usr/local/include/
 LDFLAGS = -lSDL2 -lSDL2_gfx -lsqlite3 -lm
 
 OUTPUT = trajectory

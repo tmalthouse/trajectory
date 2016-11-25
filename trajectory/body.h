@@ -27,9 +27,14 @@ typedef struct {
     struct Body *parent;
 } Orbit;
 
+typedef struct {
+    Vector3d pos;
+    Vector3d vel;
+} StateVector;
 
 typedef struct Body {
     /* Persistent fields--These can and should be used across multiple timesteps */
+    uint64_t id;
     char name[BODY_NAME_MAX_LEN];
     Orbit orbit;
     double mass;
@@ -44,7 +49,14 @@ typedef struct {
     Body *planets;
     Time t;
     uint64_t count;
+    
+    StateVector *buf0;
+    StateVector *buf1;
+    //Why not use the fast type here?
+    //Potentially expandable to more than 2 buffers (letting a core/thread calculate ahead once we have variable timesteps)
+    uint_fast8_t current_buf;
 } SolarSystem;
+
 
 /** The newton_raphson_iterator function (unsuprisingly) implements the Newton-Raphson iteration.
     Given a pointer to a function (The GCC inline functions are really helpful here), a pointer to its derivative function, an initial guess, and a
