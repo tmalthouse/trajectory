@@ -49,12 +49,6 @@ typedef struct {
     Body *planets;
     Time t;
     uint64_t count;
-    
-    StateVector *buf0;
-    StateVector *buf1;
-    //Why not use the fast type here?
-    //Potentially expandable to more than 2 buffers (letting a core/thread calculate ahead once we have variable timesteps)
-    uint_fast8_t current_buf;
 } SolarSystem;
 
 

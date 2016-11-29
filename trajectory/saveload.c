@@ -243,14 +243,14 @@ int store_system (SolarSystem s, const char *db_filename)
         
         
         status = 0;
-        status += sqlite3_step(stmt);
+        status += (sqlite3_step(stmt) == SQLITE_DONE);
         
         status += sqlite3_clear_bindings(stmt);
-        status += sqlite3_reset(stmt);
-        /*
+        status += (sqlite3_reset(stmt) == SQLITE_OK);
+        
         if (status) {
             goto error;
-        }*/
+        }
         
         logger("Done saving body %s", b.name);
     }
