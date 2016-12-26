@@ -16,7 +16,7 @@
 #include "debug.h"
 
 //Returns the g-force between the 2 given bodies.
-Vector3d body_gforce(Body a, Body b)
+Vector3d body_gforce(StateVector a, StateVector b)
 {
     double abs_dist = v3d_absdist(a.pos, b.pos);
     Vector3d unit_vect = v3d_unit_vector(v3d_vdiff(a.pos, b.pos));
@@ -24,15 +24,18 @@ Vector3d body_gforce(Body a, Body b)
     return v3d_fmult(unit_vect, (BIG_G * a.mass * b.mass)/(abs_dist*abs_dist));
 }
 
-Vector3d net_gforce(Body *sys, uint64_t count, uint64_t focusbody)
+Vector3d net_gforce(Vector3d *forcetable_ptr, uint64_t focus, uint64_t count)
 {
-    Vector3d result = V3D_0_VECTOR;
-    for (uint32_t i=0; i<count; i++) {
-        if (i!=focusbody) {
-            result = v3d_vsum(result, body_gforce(sys[i], sys[focusbody]));
-        }
+    Vector3d (*forcetable)[count] = (Vector3d(*)[count])forcetable_ptr;
+    
+    Vector3d total = V3D_0_VECTOR;
+    for (uint i=0; i<count; i++) {
+        if (i==focus) continue;
+        
+        total = v3d_vsum(total, forcetable[focus][i]);
     }
-    return result;
+    
+    return total;
 }
 
 double calculate_mu(Body b)
@@ -285,88 +288,202 @@ double newton_raphson_iterate(unaryfunc f, unaryfunc fderiv, double guess, uint8
     return newton_raphson_iterate(f, fderiv, newguess, iterations-1);
 }
 
-void euler_step(Body *b, Vector3d acc, Vector3d vel, Time dt)
+void euler_step(StateVector *b, Vector3d acc, Vector3d vel, Time dt)
 {
     b->pos = v3d_vsum(b->pos, v3d_fmult(vel, dt));
     b->vel = v3d_vsum(b->vel, v3d_fmult(acc, dt));
 }
 
-
-static _Thread_local Body *update_state_vectors_lsys = NULL;
-void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt)
+static inline void fill_forcetable(StateVector *states, Vector3d *forcetable_ptr, uint64_t count)
 {
-    //We need a storage buffer for the bodies, but need a distinct one per thread (this func isn't recursive, so that won't be an issue.) However, this also means we nead C11+ to compile.
-    //The memory allocated for the buffer here is freed by the destructor function, which should be attached to ALL threads by pthread_key_create.
+    Vector3d (*forcetable)[count] = (Vector3d(*)[count])forcetable_ptr;
     
-    if (update_state_vectors_lsys == NULL) {
+    for (uint i=0; i<count; i++) {
+        forcetable[i][i] = 0.0;
+        for (uint j=i+1; j<count; j++) {
+            Vector3d force = body_gforce(states[i], states[j]);
+            forcetable[j][i] = force;
+            forcetable[i][j] = v3d_fmult(force, -1);
+        }
+    }
+}
+
+typedef struct {
+    Vector3d vel;
+    Vector3d acc;
+} RKStep;
+
+static _Thread_local StateVector *usv_lsys = NULL;
+static _Thread_local Vector3d *forcetable_usv = NULL;
+static _Thread_local RKStep ((*vel_acc_steps)[4]) = NULL;
+static _Thread_local StateVector ((*initial_states_usv)) = NULL;
+static _Thread_local uint64_t usv_static_count = 0;
+
+static inline void initialize_buffers_usv(uint64_t count, bool force_realloc)
+{
+    if (usv_lsys == NULL || force_realloc) {
         logger("Allocating update_state_vectors buffer. This should only happen on start.");
-        update_state_vectors_lsys = calloc (1, count*sizeof(Body));
+        free(usv_lsys);
+        usv_lsys = calloc (count, sizeof(Body));
     }
     
-    Body *lsys = update_state_vectors_lsys;
+    if (forcetable_usv == NULL || force_realloc) {
+        logger("Allocating forcetable. This should only happen on start.");
+        free(forcetable_usv);
+        forcetable_usv = calloc(count*count, sizeof(Vector3d));
+    }
     
-    memcpy(lsys, sys, count*sizeof(Body)); //We want to use a copy so we aren't disturbing any other thread/core with our orbital shiftiness
-    Body *focus = &lsys[bodyid];
+    if (vel_acc_steps == NULL || force_realloc) {
+        logger("Allocating step buffer. This should only happen on start.");
+        free(vel_acc_steps);
+        vel_acc_steps = calloc(4 * count, sizeof(RKStep));
+    }
     
-    Vector3d init_pos = focus->pos;
-    Vector3d init_vel = focus->vel;
+    if (initial_states_usv == NULL || force_realloc) {
+        logger("Allocating state buffer. This should only happen on start.");
+        free(initial_states_usv);
+        initial_states_usv = calloc(count, sizeof(StateVector));
+    }
+    
+    usv_static_count = count;
+}
+
+void update_state_vectors(Body *sys, uint64_t count, Time dt)
+{
+    bool force_realloc = count == usv_static_count ? false : true;
+    
+    initialize_buffers_usv(count, force_realloc);
+    
+    size_t forcetable_size = count * count * sizeof(Vector3d);
+    
+    StateVector *lsys = usv_lsys;
+    
+    memset(forcetable_usv, 0, forcetable_size);
+    
+    Vector3d (*forcetable)[count] = (Vector3d(*)[count])forcetable_usv;
+    
+    StateVector *initial_states = initial_states_usv;
+    
+    //The commented code in this section is from the original implementation, which calculated the bodies serially. The actions performed in this code are performed on every body in the existing code, which reduces (by half) the number of calculations required, and allows for vectorization should the optimizer want it.
+    
+    //Vector3d init_pos = focus->pos;
+    //Vector3d init_vel = focus->vel;
+    
+    for (uint i=0; i<count; i++) {
+        lsys[i].pos = (initial_states[i].pos = sys[i].pos);
+        lsys[i].vel = (initial_states[i].vel = sys[i].vel);
+        lsys[i].mass = (initial_states[i].mass = sys[i].mass);
+    }
+    
+    fill_forcetable(initial_states, (Vector3d*)forcetable, count);
+    
     
     // Step one of our two simultaneous runge-kuttas.
-    Vector3d acc_1 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass)); // Aka dv/dt
-    Vector3d vel_1 = init_vel; // Aka dr/dt
+    //Vector3d acc_1 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass)); // Aka dv/dt
+    //Vector3d vel_1 = init_vel; // Aka dr/dt
+    for (uint i=0; i<count; i++) {
+        vel_acc_steps[i][0].acc = v3d_fmult(net_gforce((Vector3d*)forcetable, i, count), 1/initial_states[i].mass);
+        vel_acc_steps[i][0].vel = initial_states[i].vel;
+    }
     
-    euler_step(focus, acc_1, vel_1, dt/2);
+    
+    //euler_step(focus, acc_1, vel_1, dt/2);
+    for (uint i=0; i<count; i++) {
+        euler_step(&lsys[i], vel_acc_steps[i][0].acc, vel_acc_steps[i][0].vel, dt/2);
+    }
+    
+    
     
     // Now step two: the second slopes
-    Vector3d acc_2 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
-    Vector3d vel_2 = focus->vel;
+    // Vector3d acc_2 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
+    // Vector3d vel_2 = focus->vel;
     
     //Reset it for the mini-euler
-    focus->pos = init_pos;
-    focus->vel = init_vel;
+    //focus->pos = init_pos;
+    //focus->vel = init_vel;
     
-    euler_step(focus, acc_2, vel_2, dt/2);
+    fill_forcetable(lsys, (Vector3d*)forcetable, count);
+    for (uint i=0; i<count; i++) {
+        vel_acc_steps[i][1].acc = v3d_fmult(net_gforce((Vector3d*)forcetable, i, count), 1/initial_states[i].mass);
+        vel_acc_steps[i][1].vel = initial_states[i].vel;
+        lsys[i].pos = initial_states[i].pos;
+        lsys[i].vel = initial_states[i].vel;
+    }
     
-    // You guessed it...Step 3!
-    Vector3d acc_3 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
-    Vector3d vel_3 = focus->vel;
+    //euler_step(focus, acc_2, vel_2, dt/2);
+    
+    for (uint i=0; i<count; i++) {
+        euler_step(&lsys[i], vel_acc_steps[i][1].acc, vel_acc_steps[i][1].vel, dt/2);
+    }
+    
+    //Step 3!
+    //Vector3d acc_3 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
+    //Vector3d vel_3 = focus->vel;
     
     //Reset again!
-    focus->pos = init_pos;
-    focus->vel = init_vel;
+    //focus->pos = init_pos;
+    //focus->vel = init_vel;
     
-    euler_step(focus, acc_3, vel_3, dt);
+    fill_forcetable(lsys, (Vector3d*)forcetable, count);
+    for (uint i=0; i<count; i++) {
+        vel_acc_steps[i][2].acc = v3d_fmult(net_gforce((Vector3d*)forcetable, i, count), 1/initial_states[i].mass);
+        vel_acc_steps[i][2].vel = initial_states[i].vel;
+        lsys[i].pos = initial_states[i].pos;
+        lsys[i].vel = initial_states[i].vel;
+    }
+    
+    //euler_step(focus, acc_3, vel_3, dt);
+    for (uint i=0; i<count; i++) {
+        euler_step(&lsys[i], vel_acc_steps[i][2].acc, vel_acc_steps[i][2].vel, dt);
+    }
+    
     
     //One last step...
-    Vector3d acc_4 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
-    Vector3d vel_4 = focus->vel;
+    //Vector3d acc_4 = v3d_fmult(net_gforce(lsys, count, bodyid), 1/(focus->mass));
+    //Vector3d vel_4 = focus->vel;
+    fill_forcetable(lsys, (Vector3d*)forcetable, count);
+    for (uint i=0; i<count; i++) {
+        vel_acc_steps[i][3].acc = v3d_fmult(net_gforce((Vector3d*)forcetable, i, count), 1/initial_states[i].mass);
+        vel_acc_steps[i][3].vel = initial_states[i].vel;
+        lsys[i].pos = initial_states[i].pos;
+        lsys[i].vel = initial_states[i].vel;
+    }
     
-    Vector3d v_combined = v3d_vsum(init_vel,
-                                   v3d_fmult(v3d_nsum(4, acc_1,
-                                                        v3d_fmult(acc_2, 2),
-                                                        v3d_fmult(acc_3, 2),
-                                                        acc_4),
-                                             dt/6));
-    Vector3d p_combined = v3d_vsum(init_pos,
-                                   v3d_fmult(v3d_nsum(4, vel_1,
-                                                      v3d_fmult(vel_2, 2),
-                                                      v3d_fmult(vel_3, 2),
-                                                      vel_4),
-                                             dt/6));
-    Body *original = &sys[bodyid];
     
-    original->vel = v_combined;
-    original->pos = p_combined;
+    //Vector3d v_combined = v3d_vsum(init_vel,
+    //                               v3d_fmult(v3d_nsum(4, acc_1,
+    //                                                  v3d_fmult(acc_2, 2),
+    //                                                  v3d_fmult(acc_3, 2),
+    //                                                  acc_4),
+    //                                         dt/6));
+    //Vector3d p_combined = v3d_vsum(init_pos,
+    //                               v3d_fmult(v3d_nsum(4, vel_1,
+    //                                                  v3d_fmult(vel_2, 2),
+    //                                                  v3d_fmult(vel_3, 2),
+    //                                                  vel_4),
+    //                                          dt/6));
+    
+    for (uint i=0; i<count; i++) {
+        Body *original = &sys[i];
+        
+        original->vel = v3d_vsum(initial_states[i].vel, v3d_fmult(v3d_nsum(4, vel_acc_steps[i][0].acc,
+                                                                              v3d_fmult(vel_acc_steps[i][1].acc, 2),
+                                                                              v3d_fmult(vel_acc_steps[i][2].acc, 2),
+                                                                              vel_acc_steps[i][3].acc), dt/6));
+        
+        original->pos = v3d_vsum(initial_states[i].pos, v3d_fmult(v3d_nsum(4, vel_acc_steps[i][0].vel,
+                                                                           v3d_fmult(vel_acc_steps[i][1].vel, 2),
+                                                                           v3d_fmult(vel_acc_steps[i][2].vel, 2),
+                                                                           vel_acc_steps[i][3].vel), dt/6));
+    }
+    
     return;
 }
 
 
 void system_update(Body *sys, uint64_t count, Time dt, Time *t)
 {
-    for (uint64_t i=0; i<count; i++) {
-        update_state_vectors(sys, count, i, dt);
-        dblogger("Absolute velocity of body %llu is %f\n", i, v3d_abs(sys[i].vel));
-    }
+    update_state_vectors(sys, count, dt);
     *t += dt;
 }
 
@@ -384,8 +501,8 @@ uint64_t system_total_energy(Body *sys, uint64_t count)
 /// Destructor for a thread that calls update_state_vectors anywhere. Note that this function is safe to call at any time--i.e. it doen't break internal state (the buffer will simply be reallocated) and will work even if the buffer has never been allocated (since free(NULL) is safe.)
 void update_sv_thread_destructor(void *ptr)
 {
-    free(update_state_vectors_lsys);
-    update_state_vectors_lsys = NULL;
+    free(usv_lsys);
+    usv_lsys = NULL;
 }
 
 void print_body_info(Body b)

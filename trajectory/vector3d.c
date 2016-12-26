@@ -50,16 +50,17 @@ Vector3d v3d_vdiff(Vector3d a, Vector3d b)
 
 Vector3d v3d_vsum(Vector3d a, Vector3d b)
 {
-    return (Vector3d){a.x+b.x, a.y+b.y, a.z+b.z};
+    return a+b;
 }
 
 Vector3d v3d_fmult(Vector3d a, double f)
 {
-    return (Vector3d){a.x*f, a.y*f, a.z*f};
+    return a * f;
 }
 
 double v3d_dotprod(Vector3d a, Vector3d b)
 {
+    
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
@@ -89,19 +90,3 @@ Vector3d v3d_asum(Vector3d *vectors, uint64_t count)
     return v3d_vsum(vectors[0], v3d_asum(vectors+1, count-1));
 }
 
-Vector3d v3d_nsum(int count, ...)
-{
-    if (count == 0) {
-        return V3D_0_VECTOR;
-    }
-    
-    va_list args;
-    va_start(args, count);
-    Vector3d sum = V3D_0_VECTOR;
-    
-    for (int i=0; i<count; i++) {
-        sum = v3d_vsum(sum, va_arg(args, Vector3d));
-    }
-    va_end(args);
-    return sum;
-}

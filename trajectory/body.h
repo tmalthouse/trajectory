@@ -30,6 +30,7 @@ typedef struct {
 typedef struct {
     Vector3d pos;
     Vector3d vel;
+    double mass;
 } StateVector;
 
 typedef struct Body {
@@ -43,6 +44,8 @@ typedef struct Body {
     /* Varying fields--These can and will change rapidly, and should not be stored anywhere but here. DO NOT write to these--just read them. Writing is only to be done by the integrator function or the orbital-element-calculator-thing*/
     Vector3d pos;
     Vector3d vel;
+    
+    uint16_t screensize;
 } Body;
 
 typedef struct {
@@ -63,10 +66,10 @@ double newton_raphson_iterate(unaryfunc f, unaryfunc fderiv, double guess, uint8
 double calculate_mu(Body b);
 
 /// body_gforce returns a vector of the force exerted on body a by body b
-Vector3d body_gforce(Body a, Body b);
+Vector3d body_gforce(StateVector a, StateVector b);
 
 /// net_gforce returns a vector of the total gravitational force acting on sys[count] by all the other bodies in sys.
-Vector3d net_gforce(Body *sys, uint64_t count, uint64_t focusbody);
+Vector3d net_gforce(Vector3d *forcetable, uint64_t body, uint64_t count);
 
 /// parent_mu calculates MG for the parent body and returns it. If parent==NULL (IE the body is the central body) the method returns 0.0/./
 double parent_mu(Orbit o);
@@ -132,7 +135,7 @@ void calculate_state_vectors(Body *b, Time t);
 void calculate_orbit_params(Body *b);
 
 /// Update a body's state vectors after a given timestep dt. Uses the very accurate Runge-Kutta 4 integration
-void update_state_vectors(Body *sys, uint64_t count, uint64_t bodyid, Time dt);
+void update_state_vectors(Body *sys, uint64_t count, Time dt);
 
 /// Updates every body in a system at time dt. Uses a constant timestep for all bodies, which is not optimal.
 void system_update(Body *sys, uint64_t count, Time dt, Time *t);

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sqlite3.h>
+#include <tgmath.h>
 #include "body.h"
 #include "debug.h"
 
@@ -160,6 +161,14 @@ static SolarSystem load_system(const char *filename)
                 break;
             }
         }
+    }
+    
+    for (uint64_t i=0; i<system.count; i++) {
+        double mass = system.planets[i].mass;
+        double radius = pow(mass/M_SUN, 0.1) * 5;
+        if (radius < 1) radius = 1;
+        
+        system.planets[i].screensize = (uint16_t)rint(radius);
     }
     
     free(body_buffer);

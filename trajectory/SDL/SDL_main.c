@@ -57,7 +57,7 @@ void render_system(Body *sys, uint64_t body_count, SDL_Renderer *renderer, Vecto
     for (uint64_t i=0; i<body_count; i++) {
         //SDL_RenderDrawPoint(renderer, spos.x, spos.y);
         Color c = sys[i].color;
-        filledCircleRGBA(renderer, (int16_t)spos_buffer[i].x, (int16_t)spos_buffer[i].y, 2, c.r, c.g, c.b, c.a);
+        filledCircleRGBA(renderer, (int16_t)spos_buffer[i].x, (int16_t)spos_buffer[i].y, sys[i].screensize, c.r, c.g, c.b, c.a);
     }
     
     //Finally, we push our changes to the screen
