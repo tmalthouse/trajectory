@@ -34,7 +34,7 @@ Vector3d net_gforce(Vector3d *forcetable_ptr, uint64_t focus, uint64_t count)
         
         total = v3d_vsum(total, forcetable[focus][i]);
     }
-    
+
     return total;
 }
 
@@ -485,14 +485,19 @@ void system_update(Body *sys, uint64_t count, Time dt, Time *t)
 {
     update_state_vectors(sys, count, dt);
     *t += dt;
+    logger("%Lf", system_total_energy(sys, count));
 }
 
-uint64_t system_total_energy(Body *sys, uint64_t count)
+long double system_total_energy(Body *sys, uint64_t count)
 {
-    uint64_t total_e = 0;
+    long double total_e = 0;
     
     for (uint64_t i=0; i<count; i++) {
-        total_e += 0.5 * sys[i].mass + pow(v3d_abs(sys[i].vel), 2);
+        total_e += 0.5 * sys[i].mass * pow(v3d_abs(sys[i].vel), 2) / 1.0e12;
+        if (isinf(total_e)) {
+            logger("total_e overflowed. This can happen with very high-mass objects. The returned evergy will not be accurate.");
+            return HUGE_VALL;
+        }
     }
     
     return total_e;
@@ -503,6 +508,13 @@ void update_sv_thread_destructor(void *ptr)
 {
     free(usv_lsys);
     usv_lsys = NULL;
+    free(forcetable_usv);
+    forcetable_usv = NULL;
+    free(initial_states_usv);
+    initial_states_usv = NULL;
+    free(vel_acc_steps);
+    vel_acc_steps = NULL;
+    usv_static_count = 0;
 }
 
 void print_body_info(Body b)

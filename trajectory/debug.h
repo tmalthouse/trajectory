@@ -16,6 +16,15 @@ void logger(char *fmt, ...);
 void dblogger(char *fmt, ...);
 void end_logger();
 
+//For assert.h
+#ifndef DEBUG
+#define NDEBUG
+#endif
+
+#include <assert.h>
+
+
+
 
 
 #endif /* debug_h */
