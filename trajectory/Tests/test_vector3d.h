@@ -9,9 +9,8 @@
 #ifndef test_vector3d_h
 #define test_vector3d_h
 
-#include <stdio.h>
 #include <stdbool.h>
-
+#include <stdio.h>
 
 bool test_v3d_equals();
 

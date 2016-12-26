@@ -10,14 +10,10 @@
 #define SDL_main_h
 
 #include <stdio.h>
-#include "../vector2d.h"
 #include "../body.h"
+#include "../vector2d.h"
 #define PLANET_SIZE (2)
-
-
 
 void rungame(SolarSystem sys);
 
 #endif /* SDL_main_h */
-
-

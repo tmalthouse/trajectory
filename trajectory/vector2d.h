@@ -12,13 +12,13 @@
 #include <stdio.h>
 
 typedef struct {
-    double x;
-    double y;
+  double x;
+  double y;
 } Vector2d;
 
 typedef struct {
-    Vector2d a;
-    Vector2d b;
+  Vector2d a;
+  Vector2d b;
 } Vector2dPair;
 
 double v2d_absdist(Vector2d a, Vector2d b);

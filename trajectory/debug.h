@@ -10,21 +10,16 @@
 #define debug_h
 #include <stdio.h>
 
-
 void start_logger();
 void logger(char *fmt, ...);
 void dblogger(char *fmt, ...);
 void end_logger();
 
-//For assert.h
+// For assert.h
 #ifndef DEBUG
 #define NDEBUG
 #endif
 
 #include <assert.h>
-
-
-
-
 
 #endif /* debug_h */

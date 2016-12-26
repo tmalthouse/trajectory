@@ -7,24 +7,23 @@
 //
 
 #include <stdio.h>
+#include "SDL/SDL_main.h"
 #include "body.h"
 #include "debug.h"
-#include "SDL/SDL_main.h"
 #include "saveload.h"
 
-const char *db ="/Users/Thomas/Documents/xcode/trajectory/trajectory/SolarSystem.sqlite3";
-
+const char *db =
+    "/Users/Thomas/Documents/xcode/trajectory/trajectory/SolarSystem.sqlite3";
 
 int main(int argc, const char *argv[]) {
+  start_logger();
 
-    start_logger();
-    
-    SolarSystem sys = load_and_calculate_system(db);
-    
-    rungame(sys);
-    
-    store_system(sys, db);
+  SolarSystem sys = load_and_calculate_system(db);
 
-    end_logger();
-    return 0;
+  rungame(sys);
+
+  store_system(sys, db);
+
+  end_logger();
+  return 0;
 }

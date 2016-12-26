@@ -9,8 +9,6 @@
 #include "vector2d.h"
 #include <tgmath.h>
 
-
-double v2d_absdist(Vector2d a, Vector2d b)
-{
-    return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y));
+double v2d_absdist(Vector2d a, Vector2d b) {
+  return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }

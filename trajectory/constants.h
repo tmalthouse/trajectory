@@ -18,6 +18,4 @@
 
 #define BODY_NAME_MAX_LEN 64
 
-
-
 #endif /* constants_h */
