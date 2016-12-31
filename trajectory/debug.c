@@ -11,9 +11,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "vector3d.h"
 
 static const char *log_path = "/Users/Thomas/Desktop/trajectory.log";
 static FILE *logfile;
+
+void logger(char *fmt, ...);
 
 void start_logger() {
   logfile = fopen(log_path, "w");
@@ -22,7 +25,13 @@ void start_logger() {
     perror("File error");
     exit(EXIT_FAILURE);
   }
-  // logfile = stdout;
+  //logfile = stdout;
+  
+#ifndef OPENCL_VECTORS
+  logger("clang OPENCL vectors not supported/enabled. Falling back to software vectors. Performance may be affected.");
+#else
+  logger("Using clang OPENCL harware accelerated vectors.");
+#endif
 }
 
 void logger(char *fmt, ...) {

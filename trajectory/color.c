@@ -15,7 +15,7 @@ int check_endianness() {
   return (*((uint8_t *)(&i))) == 0xFF;
 }
 
-// For both these functions, we treat the hex value (a 32-bit uint) like an
+// For both these functions, we treat the hex value (a 32-bit uint32_t) like an
 // array of 4 8-bit values--a, b, g, r in that order.
 Color hex_to_color(uint32_t hex) {
   // We're assuming intel procs here--little endian.

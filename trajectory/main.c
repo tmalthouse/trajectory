@@ -12,8 +12,9 @@
 #include "debug.h"
 #include "saveload.h"
 
-const char *db =
-    "/Users/Thomas/Documents/xcode/trajectory/trajectory/SolarSystem.sqlite3";
+//const char *db =
+//    "/Users/Thomas/Documents/xcode/trajectory/trajectory/SolarSystem.sqlite3";
+const char *db = "/Users/Thomas/Desktop/cloud.db";
 
 int main(int argc, const char *argv[]) {
   start_logger();

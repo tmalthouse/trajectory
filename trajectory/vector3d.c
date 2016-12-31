@@ -11,7 +11,7 @@
 
 #define SQ(x) (x * x)
 
-static bool fp_eq(double a, double b) {
+static inline bool fp_eq(double a, double b) {
   return fabs(a - b) < 0.1 ? true : false;
 }
 
@@ -40,9 +40,21 @@ Vector3d v3d_vdiff(Vector3d a, Vector3d b) {
   return (Vector3d){a.x - b.x, a.y - b.y, a.z - b.z};
 }
 
-Vector3d v3d_vsum(Vector3d a, Vector3d b) { return a + b; }
+Vector3d v3d_vsum(Vector3d a, Vector3d b) {
+#ifdef OPENCL_VECTORS
+  return a + b;
+#else
+  return (Vector3d){a.x + b.x, a.y + b.y , a.z + b.z, 0};
+#endif
+}
 
-Vector3d v3d_fmult(Vector3d a, double f) { return a * f; }
+Vector3d v3d_fmult(Vector3d a, double f) {
+#ifdef OPENCL_VECTORS
+  return a * f;
+#else
+  return (Vector3d){a.x * f, a.y * f, a.z * f, 0};
+#endif
+}
 
 double v3d_dotprod(Vector3d a, Vector3d b) {
   return a.x * b.x + a.y * b.y + a.z * b.z;

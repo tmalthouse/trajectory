@@ -13,9 +13,12 @@
 
 static const char *COUNTBODIES = "SELECT COUNT(*) AS count FROM bodies";
 static const char *GETBODIES = "SELECT * FROM bodies";
+static const char *GETSTATEBODIES = "SELECT * FROM state_bodies";
 static const char *UPDATEBODY =
     "UPDATE bodies SET semimajoraxis=?001, eccentricity=?002, "
     "inclination=?003, arg_of_periapsis=?004, long_ascend_node=?005, "
     "mean_ano_epoch=?006, time_since_epoch=?007 WHERE id=?008";
+static const char *CHECKTABLE = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=?001;";
+static const char *COUNTSTATEBODIES = "SELECT COUNT(*) AS count FROM state_bodies";
 
 #endif /* SQL_statements_h */

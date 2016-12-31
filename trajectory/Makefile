@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -O3 -I/usr/local/include/
-LDFLAGS = -lSDL2 -lSDL2_gfx -lsqlite3 -lm
+CFLAGS = -static -O3 -I/usr/local/include
+LDFLAGS = -lSDL2_gfx -lsqlite3  -L/usr/local/lib -lSDL2 -lm -liconv -Wl,-framework,CoreAudio -Wl,-framework,AudioToolbox -Wl,-framework,ForceFeedback -lobjc -Wl,-framework,CoreVideo -Wl,-framework,Cocoa -Wl,-framework,Carbon -Wl,-framework,IOKit
 
 OUTPUT = trajectory
 
