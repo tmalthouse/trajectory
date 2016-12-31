@@ -12,6 +12,8 @@ Trajectory is a solar system simulator, written in C. The physics is fully simul
 
 To build, simply run `make`. Run the resulting `trajectory` executable.
 
+Alternatively, import into XCode and run from there.
+
 ### Dependencies:
  Trajectory needs the `SDL2`, `SDL2_gfx`, and `sqlite3` libraries installed. If you don't have them, you can download them with your package manager:
 
@@ -39,9 +41,10 @@ By default, the system is paused. Hold the `.`(period) button to speed up the pa
 ### Custom solar systems:
 
 Solar systems are loaded via sqlite. Use the `SolarSystem.sqlite3` as an example.
+There's 2 modes for the database. The first uses orbital parameters to define bodies (as shown in `SolarSystem.sqlite3`). The second uses state vectors, as shown in `cloud.db`, which contains a randomly generated cloud of 1000 planetary--mass objects randomly distributed in a sphere the size of Pluto's orbit.
 
 ### TODO:
 * Add a simple 3d renderer (probably still using SDL)
 * Add tools to change orbits in-game
 * Implement variable timesteps—bodies with lots of acceleration get updated frequently, while far-flung bodies only get updated rarely.
-* Parallelize the gravity calculations
+* Parallelize the gravity calculations---easier with the forcetable implementation from f6adf2a.

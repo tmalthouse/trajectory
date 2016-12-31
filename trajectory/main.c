@@ -18,12 +18,20 @@ const char *db = "/Users/Thomas/Desktop/cloud.db";
 
 int main(int argc, const char *argv[]) {
   start_logger();
-
-  SolarSystem sys = load_and_calculate_system(db);
+  
+  const char *dbfile;
+  if (argc == 2) {
+    dbfile = argv[1];
+  } else {
+    logger("Using the default database at \"%s\". To specify a database, provide it as the first and only argument on the command line.", db);
+    dbfile = db;
+  }
+  
+  SolarSystem sys = load_and_calculate_system(dbfile);
 
   rungame(sys);
 
-  store_system(sys, db);
+  store_system(sys, dbfile);
 
   end_logger();
   return 0;

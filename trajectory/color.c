@@ -18,7 +18,6 @@ int check_endianness() {
 // For both these functions, we treat the hex value (a 32-bit uint32_t) like an
 // array of 4 8-bit values--a, b, g, r in that order.
 Color hex_to_color(uint32_t hex) {
-  // We're assuming intel procs here--little endian.
   Color result;
   uint8_t *hex_ptr = (uint8_t *)&hex;
   dblogger("%x\n", hex);

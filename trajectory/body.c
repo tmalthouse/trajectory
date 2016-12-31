@@ -274,7 +274,6 @@ void euler_step(StateVector *b, Vector3d acc, Vector3d vel, Time dt) {
 static inline void fill_forcetable(StateVector *states,
                                    Vector3d *forcetable_ptr, uint64_t count) {
   Vector3d(*forcetable)[count] = (Vector3d(*)[count])forcetable_ptr;
-
   for (uint32_t i = 0; i < count; i++) {
     forcetable[i][i] = 0.0;
     for (uint32_t j = i + 1; j < count; j++) {

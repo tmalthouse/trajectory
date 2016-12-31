@@ -32,7 +32,6 @@ Vector2dPair min_max_xy_coords(Body *sys, uint64_t count) {
     if (pos.y < min.y) {
       min.y = pos.y;
     }
-
     if (pos.x > max.x) {
       max.x = pos.x;
     }
@@ -148,7 +147,7 @@ int update(SolarSystem *sys, uint64_t body_count, SDL_Renderer *renderer,
            SDL_Window *win) {
   static uint64_t steps = 10;
 
-  Time dt = 1000000;
+  Time dt = 1000;
   for (uint64_t i = 0; i < steps; i++) {
     system_update(sys->planets, body_count, dt, t);
     *t += dt;

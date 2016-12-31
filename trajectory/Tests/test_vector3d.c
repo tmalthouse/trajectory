@@ -16,7 +16,7 @@ static bool fp_eq(double a, double b) {
 }
 
 void report(const char *fn, bool result) {
-  printf("%s %s!\n", fn, result ? "✅ PASSED" : "❌ FAILED");
+  printf("%s %s!\n", fn, result ? "\t✅ PASSED" : "\t❌ FAILED");
 }
 
 bool test_v3d_equals() {
