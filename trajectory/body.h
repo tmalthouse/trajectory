@@ -52,7 +52,6 @@ typedef struct Body {
   uint16_t screensize;
 } Body;
 
-
 enum system_mode {
   MODE_PARAMS,
   MODE_STATES,

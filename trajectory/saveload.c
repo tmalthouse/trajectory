@@ -83,9 +83,10 @@ static int fill_body_field(sqlite3_stmt *stmt, struct db_body *b, int icol) {
   return 0;
 }
 
-static int fill_state_body_field(sqlite3_stmt *stmt, struct db_body *b, int icol) {
+static int fill_state_body_field(sqlite3_stmt *stmt, struct db_body *b,
+                                 int icol) {
   uint64_t col_name_hashed = djb2_hash(sqlite3_column_name(stmt, icol));
-  
+
   if (djb2_hash("id") == col_name_hashed) {
     int id = sqlite3_column_int(stmt, icol);
     b->db_id = id;
@@ -96,7 +97,7 @@ static int fill_state_body_field(sqlite3_stmt *stmt, struct db_body *b, int icol
     b->b.pos.y = sqlite3_column_double(stmt, icol);
   } else if (djb2_hash("POS_Z") == col_name_hashed) {
     b->b.pos.z = sqlite3_column_double(stmt, icol);
-  }else if (djb2_hash("VEL_X") == col_name_hashed) {
+  } else if (djb2_hash("VEL_X") == col_name_hashed) {
     b->b.vel.x = sqlite3_column_double(stmt, icol);
   } else if (djb2_hash("VEL_Y") == col_name_hashed) {
     b->b.vel.y = sqlite3_column_double(stmt, icol);
@@ -109,40 +110,40 @@ static int fill_state_body_field(sqlite3_stmt *stmt, struct db_body *b, int icol
       snprintf(b->b.name, BODY_NAME_MAX_LEN, "%llu", b->b.id);
     } else {
       strlcpy(b->b.name, (const char *)sqlite3_column_text(stmt, icol),
-            BODY_NAME_MAX_LEN);
+              BODY_NAME_MAX_LEN);
     }
   }
   return 0;
 }
 
-
 static SolarSystem load_system_from_db(sqlite3 *db, enum system_mode mode);
 static void system_calculate_state_vectors(SolarSystem *s);
 
-static SolarSystem load_system (const char *filename) {
+static SolarSystem load_system(const char *filename) {
   sqlite3 *db;
   int status = sqlite3_open(filename, &db);
   if (status) {
     goto error;
   }
-  
+
   sqlite3_stmt *check_table;
-  status = sqlite3_prepare_v2(db, CHECKTABLE, NULL_TERMINATED_STMT, &check_table, NULL);
+  status = sqlite3_prepare_v2(db, CHECKTABLE, NULL_TERMINATED_STMT,
+                              &check_table, NULL);
   if (status) {
     goto error;
   }
-  
-  sqlite3_bind_text(check_table, 1, "bodies", NULL_TERMINATED_STMT, SQLITE_STATIC);
-  
+
+  sqlite3_bind_text(check_table, 1, "bodies", NULL_TERMINATED_STMT,
+                    SQLITE_STATIC);
+
   status = sqlite3_step(check_table);
   if (status != SQLITE_ROW) {
     goto error;
   }
   bool params = sqlite3_column_int(check_table, 0);
-  
-  return load_system_from_db(db, params?MODE_PARAMS:MODE_STATES);
 
-  
+  return load_system_from_db(db, params ? MODE_PARAMS : MODE_STATES);
+
 error:
   exit(-1);
 }
@@ -150,11 +151,11 @@ error:
 static SolarSystem load_system_from_db(sqlite3 *db, enum system_mode mode) {
   SolarSystem system = {};
   int status = 0;
-  
+
   char *err = NULL;
   int rows;
-  const char *query = mode==MODE_PARAMS?COUNTBODIES:COUNTSTATEBODIES;
-  
+  const char *query = mode == MODE_PARAMS ? COUNTBODIES : COUNTSTATEBODIES;
+
   status = sqlite3_exec(db, query, count_callback, &rows, &err);
   if (status) {
     goto error;
@@ -167,13 +168,15 @@ static SolarSystem load_system_from_db(sqlite3 *db, enum system_mode mode) {
 
   sqlite3_stmt *getbodies;
   status =
-  sqlite3_prepare_v2(db, (mode==MODE_PARAMS)?GETBODIES:GETSTATEBODIES, NULL_TERMINATED_STMT, &getbodies, NULL);
+      sqlite3_prepare_v2(db, (mode == MODE_PARAMS) ? GETBODIES : GETSTATEBODIES,
+                         NULL_TERMINATED_STMT, &getbodies, NULL);
   if (status) {
     goto error;
   }
 
-  int (*fillfunc)(sqlite3_stmt *stmt, struct db_body *b, int icol) = mode==MODE_PARAMS?fill_body_field:fill_state_body_field;
-  
+  int (*fillfunc)(sqlite3_stmt * stmt, struct db_body * b, int icol) =
+      mode == MODE_PARAMS ? fill_body_field : fill_state_body_field;
+
   for (int i = 0; i < rows; i++) {
     status = sqlite3_step(getbodies);
     if (status != SQLITE_ROW) {
@@ -194,7 +197,7 @@ static SolarSystem load_system_from_db(sqlite3 *db, enum system_mode mode) {
   }
 
   // And match up the root body pointers if we're using parameters.
-  if (mode==MODE_PARAMS) {
+  if (mode == MODE_PARAMS) {
     for (uint64_t i = 0; i < system.count; i++) {
       uint64_t root_id = body_buffer[i].root_id;
 
@@ -216,7 +219,6 @@ static SolarSystem load_system_from_db(sqlite3 *db, enum system_mode mode) {
     }
     system_calculate_state_vectors(&system);
   }
-  
 
   for (uint64_t i = 0; i < system.count; i++) {
     double mass = system.planets[i].mass;
@@ -252,7 +254,7 @@ SolarSystem load_and_calculate_system(const char *filename) {
     s.planets[i].mu = calculate_mu(s.planets[i]);
   }
 
-  //system_calculate_state_vectors(&s);
+  // system_calculate_state_vectors(&s);
   for (uint64_t i = 0; i < s.count; i++) {
     print_body_info(s.planets[i]);
   }

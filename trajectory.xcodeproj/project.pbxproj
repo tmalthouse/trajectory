@@ -65,6 +65,7 @@
 		E93333B31D3EAA48005C9BA7 /* vector2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector2d.h; sourceTree = "<group>"; };
 		E93333B51D3EAE04005C9BA7 /* debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		E93333B61D3EB031005C9BA7 /* debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debug.c; sourceTree = "<group>"; };
+		E97E5D741E11AF220007B1DE /* trajectory.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = trajectory.profdata; sourceTree = "<group>"; };
 		E988DCB51D3D28B5005519E8 /* saveload.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saveload.c; sourceTree = "<group>"; };
 		E988DCB61D3D28B5005519E8 /* saveload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveload.h; sourceTree = "<group>"; };
 		E996A61B1D3E68FE00732E76 /* test_vector3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_vector3d.c; path = Tests/test_vector3d.c; sourceTree = "<group>"; };
@@ -121,6 +122,7 @@
 				E996A6231D3E6A1F00732E76 /* trajectory.testing */,
 				E93207D61D2DC6680046D5CB /* Products */,
 				E91B73331DB7334C000D81C8 /* Frameworks */,
+				E97E5D731E11AF210007B1DE /* OptimizationProfiles */,
 			);
 			sourceTree = "<group>";
 		};
@@ -159,6 +161,14 @@
 				E93207D81D2DC6680046D5CB /* main.c */,
 			);
 			path = trajectory;
+			sourceTree = "<group>";
+		};
+		E97E5D731E11AF210007B1DE /* OptimizationProfiles */ = {
+			isa = PBXGroup;
+			children = (
+				E97E5D741E11AF220007B1DE /* trajectory.profdata */,
+			);
+			path = OptimizationProfiles;
 			sourceTree = "<group>";
 		};
 		E996A61A1D3E68E700732E76 /* Tests */ = {
@@ -383,8 +393,9 @@
 		E93207DD1D2DC6680046D5CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_USE_OPTIMIZATION_PROFILE = NO;
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_SHADOW = YES;
@@ -408,7 +419,7 @@
 		E93207DE1D2DC6680046D5CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_USE_OPTIMIZATION_PROFILE = NO;
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;
@@ -427,7 +438,10 @@
 				);
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				OTHER_CFLAGS = "-ftrapv";
+				OTHER_CFLAGS = (
+					"-flto",
+					"-march=native",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

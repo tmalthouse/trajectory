@@ -127,7 +127,7 @@ int event_handler(SDL_Event *e, uint64_t *steps, Vector2d *spos_buffer,
         }
         break;
       }
-        
+
       case SDL_WINDOWEVENT: {
         SDL_WindowEvent event = e->window;
         if (event.type == SDL_WINDOWEVENT_RESIZED) {
@@ -144,7 +144,8 @@ int event_handler(SDL_Event *e, uint64_t *steps, Vector2d *spos_buffer,
 }
 
 int update(SolarSystem *sys, uint64_t body_count, SDL_Renderer *renderer,
-           Vector2d screen_size, Time *t, SDL_Event *e, Vector2d *spos_buffer, SDL_Window *win) {
+           Vector2d screen_size, Time *t, SDL_Event *e, Vector2d *spos_buffer,
+           SDL_Window *win) {
   static uint64_t steps = 10;
 
   Time dt = 1000000;
@@ -169,9 +170,9 @@ void rungame(SolarSystem sys) {
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
   int scrx, scry;
-  
+
   SDL_DisplayMode mode;
-  
+
   SDL_GetCurrentDisplayMode(0, &mode);
 
   SDL_Window *win = SDL_CreateWindow("Trajectory!", SDL_WINDOWPOS_CENTERED,
@@ -197,7 +198,8 @@ void rungame(SolarSystem sys) {
   Vector2d screen_positions[bodycount];
 
   while (!quit) {
-    if (update(&sys, bodycount, render, screensize, &t, &e, screen_positions, win)) {
+    if (update(&sys, bodycount, render, screensize, &t, &e, screen_positions,
+               win)) {
       quit = true;
     }
 

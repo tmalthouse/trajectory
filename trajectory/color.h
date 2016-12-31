@@ -19,7 +19,8 @@ typedef struct {
   uint8_t a;
 } Color;
 
-// Suppress warnings about enum values being above MAXINT, since it's not being used as an enum (the bits are right, even if it's not a valid enum value.)
+// Suppress warnings about enum values being above MAXINT, since it's not being
+// used as an enum (the bits are right, even if it's not a valid enum value.)
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic push
 

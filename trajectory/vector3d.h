@@ -18,7 +18,8 @@
 #define OPENCL_VECTORS
 #endif
 
-// Vector3d is a 3-component vector of doubles, representing an (xyz) vector quantity
+// Vector3d is a 3-component vector of doubles, representing an (xyz) vector
+// quantity
 // God bless clang and OpenCL vectors. Drop in replacement for the struct
 // version.
 // A 4-component vector is used so the size is a power of 2, which is faster.

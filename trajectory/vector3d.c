@@ -44,7 +44,7 @@ Vector3d v3d_vsum(Vector3d a, Vector3d b) {
 #ifdef OPENCL_VECTORS
   return a + b;
 #else
-  return (Vector3d){a.x + b.x, a.y + b.y , a.z + b.z, 0};
+  return (Vector3d){a.x + b.x, a.y + b.y, a.z + b.z, 0};
 #endif
 }
 

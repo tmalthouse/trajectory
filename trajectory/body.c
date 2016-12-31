@@ -271,7 +271,7 @@ void euler_step(StateVector *b, Vector3d acc, Vector3d vel, Time dt) {
   b->vel = v3d_vsum(b->vel, v3d_fmult(acc, dt));
 }
 
-static inline void fill_forcetable (StateVector *states,
+static inline void fill_forcetable(StateVector *states,
                                    Vector3d *forcetable_ptr, uint64_t count) {
   Vector3d(*forcetable)[count] = (Vector3d(*)[count])forcetable_ptr;
 

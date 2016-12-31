@@ -25,10 +25,12 @@ void start_logger() {
     perror("File error");
     exit(EXIT_FAILURE);
   }
-  //logfile = stdout;
-  
+// logfile = stdout;
+
 #ifndef OPENCL_VECTORS
-  logger("clang OPENCL vectors not supported/enabled. Falling back to software vectors. Performance may be affected.");
+  logger(
+      "clang OPENCL vectors not supported/enabled. Falling back to software "
+      "vectors. Performance may be affected.");
 #else
   logger("Using clang OPENCL harware accelerated vectors.");
 #endif
