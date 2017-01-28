@@ -134,9 +134,10 @@ int event_handler(SDL_Event *e, uint64_t *steps, Vector2d *spos_buffer,
           SDL_GetWindowSize(win, &x, &y);
           set_screensize((Vector2d){x, y});
         }
+        break;
       }
-      default:;
-        // dblogger("Event detected");
+      default:
+        dblogger("Unhandled event recieved\n");
     }
   }
   return 0;

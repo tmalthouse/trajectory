@@ -29,7 +29,7 @@ bool v3d_fp_eq(Vector3d a, Vector3d b) {
   return false;
 }
 
-double v3d_abs(Vector3d v) { return v3d_absdist(v, (Vector3d){0, 0, 0}); }
+double v3d_abs(Vector3d v) { return v3d_absdist(v, V3D_0_VECTOR); }
 
 double v3d_absdist(Vector3d a, Vector3d b) {
   Vector3d diff = v3d_vdiff(a, b);
@@ -44,7 +44,7 @@ Vector3d v3d_vsum(Vector3d a, Vector3d b) {
 #ifdef OPENCL_VECTORS
   return a + b;
 #else
-  return (Vector3d){a.x + b.x, a.y + b.y, a.z + b.z, 0};
+  return (Vector3d){a.x + b.x, a.y + b.y, a.z + b.z};
 #endif
 }
 
@@ -52,7 +52,7 @@ Vector3d v3d_fmult(Vector3d a, double f) {
 #ifdef OPENCL_VECTORS
   return a * f;
 #else
-  return (Vector3d){a.x * f, a.y * f, a.z * f, 0};
+  return (Vector3d){a.x * f, a.y * f, a.z * f};
 #endif
 }
 

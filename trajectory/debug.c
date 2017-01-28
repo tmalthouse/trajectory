@@ -54,14 +54,11 @@ void logger(char *fmt, ...) {
           "close it?");
 }
 
-void dblogger(char *fmt, ...) {
-#ifdef LIZARD_KING  // We want debug info, but this is too much
-  va_list args;
-  va_start(args, fmt);
-  vfprintf(logfile, fmt, args);
-  va_end(args);
+#ifdef DEBUG
+#define dblogger(...) logger(__VA_ARGS__)
+#else
+#define dblogger(...) (void)(0);
 #endif
-}
 
 void end_logger() {
   fclose(logfile);
